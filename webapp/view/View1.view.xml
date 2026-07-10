@@ -1,0 +1,53 @@
+<mvc:View
+    controllerName="sap.ui5.project.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:layout="sap.ui.layout"
+    xmlns:tnt="sap.tnt"
+    height="100%"
+>
+    <Page
+        id="page"
+        title="{i18n>appTitle}"
+    >
+        <f:DynamicPage
+            id="dynamicPageId"
+            toggleHeaderOnTitleClick="true"
+            fitContent="true"
+        >
+            <f:content>
+                <!-- Tab Container that houses the decoupled views -->
+                <IconTabBar
+                    id="idIconTabBar"
+                    stretchContentHeight="true"
+                    headerMode="Inline"
+                >
+                    <items>
+                        <!-- Sales Tab linking to the separate Sales View -->
+                        <IconTabFilter
+                            icon="sap-icon://sales-order"
+                            text="{i18n>salesTabText}"
+                            key="Sales"
+                        >
+                            <mvc:XMLView
+                                viewName="sap.ui5.project.view.SalesTable"
+                            />
+                        </IconTabFilter>
+
+                        <!-- Purchase Tab linking to the separate Purchase View -->
+                        <IconTabFilter
+                            icon="sap-icon://credit-card"
+                            text="{i18n>purchaseTabText}"
+                            key="Purchase"
+                        >
+                            <mvc:XMLView
+                                viewName="sap.ui5.project.view.PurchaseTable"
+                            />
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </f:content>
+        </f:DynamicPage>
+    </Page>
+</mvc:View>

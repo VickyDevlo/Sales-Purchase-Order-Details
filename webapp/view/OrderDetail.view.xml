@@ -1,0 +1,120 @@
+<mvc:View
+    controllerName="sap.ui5.project.controller.OrderDetail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+    height="100%"
+>
+    <f:DynamicPage toggleHeaderOnTitleClick="true">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox>
+                        <Button
+                            icon="sap-icon://nav-back"
+                            type="Transparent"
+                            press="onNavBack"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Title
+                            id="idPageTitle"
+                            text=""
+                            level="H1"
+                        />
+                    </HBox>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:content>
+            <VBox class="sapUiResponsiveMargin">
+                <!-- Header Summary Form -->
+                <form:SimpleForm
+                    title="{i18n>formTitle}"
+                    editable="true"
+                    layout="ColumnLayout"
+                >
+                    <form:content>
+                        <Label text="{i18n>referenceIdLabel}" />
+                        <Text
+                            id="txtOrderId"
+                            text=""
+                        />
+
+                        <Label text="{i18n>clientNameLabel}" />
+                        <Text
+                            id="txtPartnerName"
+                            text=""
+                        />
+
+                        <Label text="{i18n>totalLabel}" />
+                        <Text
+                            id="txtTotal"
+                            text=""
+                        />
+
+                        <Label text="{i18n>statusLabel}" />
+                        <ObjectStatus
+                            id="txtStatus"
+                            text="{detail>/Status}"
+                            state="{path: 'detail>/Status', formatter: 'window.myGlobalFormatter.statusState'}"
+                        />
+                    </form:content>
+                </form:SimpleForm>
+
+                <!-- NEW: Responsive Table for displaying Line Items -->
+                <Table
+                    id="idItemsTable"
+                    items="{detail>/Items}"
+                    class="sapUiMediumMarginTop"
+                >
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title
+                                text="{i18n>detailTableTitle}"
+                                level="H2"
+                            />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="40%">
+                            <Text text="{i18n>colText1}" />
+                        </Column>
+                        <Column
+                            hAlign="Center"
+                            width="15%"
+                        >
+                            <Text text="{i18n>colText2}" />
+                        </Column>
+                        <Column
+                            hAlign="Center"
+                            width="15%"
+                        >
+                            <Text text="{i18n>colText3}" />
+                        </Column>
+                        <Column
+                            hAlign="End"
+                            width="20%"
+                        >
+                            <Text text="{i18n>colText4}" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <ObjectIdentifier title="{detail>Product}" />
+                                <Text text="{detail>Quantity}" />
+                                <ObjectNumber number="{detail>UnitPrice}" />
+                                <ObjectNumber
+                                    number="{detail>TotalPrice}"
+                                    unit="EUR"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

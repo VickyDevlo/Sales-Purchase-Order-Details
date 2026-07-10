@@ -1,0 +1,114 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "sap.ui5.project",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.20.0",
+      "toolsId": "709e0478-1dda-445c-abc7-e6656b2a5aaa"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.149.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleUrl": "i18n/i18n.properties",
+          "supportedLocales": [
+            "en",
+            ""
+          ],
+          "fallbackLocale": "en"
+        }
+      }
+    },
+    "resources": {
+      "js": [
+        {
+          "uri": "model/formatter.js"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "sap.ui5.project.view",
+        "async": true,
+        "viewPath": "sap.ui5.project.view"
+      },
+      "routes": [
+        {
+          "name": "RouteView1",
+          "pattern": ":?query:",
+          "target": [
+            "TargetView1"
+          ]
+        },
+        {
+          "name": "RouteOrderDetail",
+          "pattern": "order-details/{orderType}/{orderId}",
+          "target": [
+            "TargetOrderDetail"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetView1": {
+          "id": "View1",
+          "name": "View1"
+        },
+        "TargetOrderDetail": {
+          "id": "OrderDetail",
+          "name": "OrderDetail"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "sap.ui5.project.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}

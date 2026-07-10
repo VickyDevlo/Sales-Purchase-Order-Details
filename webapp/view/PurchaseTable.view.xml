@@ -1,0 +1,64 @@
+<mvc:View
+    controllerName="sap.ui5.project.controller.PurchaseTable"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+>
+    <Table
+        id="purchaseTable"
+        items="{orders>/PurchaseOrders}"
+        growing="true"
+        growingScrollToLoad="true"
+        growingThreshold="10"
+    >
+        <headerToolbar>
+            <OverflowToolbar>
+                <Title
+                    text="{i18n>purchaseTableTitle}"
+                    level="H2"
+                />
+                <ToolbarSpacer />
+                <SearchField
+                    width="30%"
+                    search=".onSearchPurchase"
+                />
+                <Button
+                    icon="sap-icon://add"
+                    text="{i18n>addNewPurchaseBtnText}"
+                    type="Emphasized"
+                    press="onCreatePurchase"
+                />
+            </OverflowToolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="{i18n>purchaseCol1Text}" />
+            </Column>
+            <Column>
+                <Text text="{i18n>purchaseCol2Text}" />
+            </Column>
+            <Column hAlign="End">
+                <Text text="{i18n>purchaseCol3Text}" />
+            </Column>
+            <Column hAlign="Center">
+                <Text text="{i18n>purchaseCol4Text}" />
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem
+                type="Navigation"
+                press="onDetails"
+            >
+                <cells>
+                    <ObjectIdentifier title="{orders>PONumber}" />
+                    <Text text="{orders>SupplierName}" />
+                    <ObjectNumber
+                        number="{orders>TotalCost}"
+                        unit="{orders>Currency}"
+                    />
+                     <tnt:InfoLabel text="{orders>Status}" colorScheme="{path: 'orders>Status', formatter: '.formatter.statusColor'}"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</mvc:View>

@@ -1,0 +1,158 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:layout="sap.ui.layout"
+>
+    <Dialog
+        id="idSalesDialog"
+        title="{i18n>salesDialogTitle}"
+        contentWidth="600px"
+        type="Message"
+    >
+        <content>
+            <VBox class="sapUiContentPadding">
+                <!-- Header Fields -->
+                <form:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    title="{i18n>salesHeader}"
+                >
+                    <form:content>
+                        <Label
+                            text="{i18n>salesDialogLabel1}"
+                            required="true"
+                        />
+                        <Input
+                            id="inputSalesId"
+                            editable="false"
+                        />
+                        <Label
+                            text="{i18n>salesDialogLabel2}"
+                            required="true"
+                        />
+                        <Input
+                            id="inputCustomerName"
+                            placeholder="e.g. Horizon Ltd"
+                        />
+                        <Label text="{i18n>salesDialogLabel3}" />
+                        <Select
+                            id="selectStatus"
+                            selectedKey="Pending"
+                        >
+                            <core:Item
+                                key="Pending"
+                                text="Pending"
+                            />
+                            <core:Item
+                                key="In Progress"
+                                text="In Progress"
+                            />
+                            <core:Item
+                                key="Delivered"
+                                text="Delivered"
+                            />
+                        </Select>
+                    </form:content>
+                </form:SimpleForm>
+
+                <!-- Dynamic Item Row Entry Section -->
+                <form:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    title="{i18n>dialogFormTitle}"
+                >
+                    <form:content>
+                        <Label
+                            text="{i18n>dialogFormLabel1}"
+                            required="true"
+                        />
+                        <Input
+                            id="inputSalesProduct"
+                            placeholder="e.g. Office Chair"
+                        />
+                        <Label
+                            text="{i18n>dialogFormLabel2}"
+                            required="true"
+                        />
+                        <layout:HorizontalLayout>
+                            <Input
+                                id="inputSalesQty"
+                                type="Number"
+                                placeholder="Qty"
+                                width="100px"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            
+                            <Input
+                                id="inputSalesPrice"
+                                type="Number"
+                                placeholder="Price"
+                                width="150px"
+                            />
+                            <Button
+                                icon="sap-icon://add"
+                                text="{i18n>dialogAddBtn}"
+                                type="Ghost"
+                                press="onAddSalesItemRow"
+                                class="sapUiTinyMarginBegin"
+                            />
+                        </layout:HorizontalLayout>
+                    </form:content>
+                </form:SimpleForm>
+
+                <!-- Review Staged Items Table -->
+                <Table
+                    id="idStagedSalesTable"
+                    items="{dialogData>/Items}"
+                    noDataText="{i18n>dialogTableNoDataText}"
+                >
+                    <columns>
+                        
+                        <Column width="45%">
+                            <Text text="{i18n>dialogTableCol1Text}" />
+                        </Column>
+                        <Column
+                            hAlign="End"
+                            width="15%"
+                        >
+                            <Text text="{i18n>dialogTableCol2Text}" />
+                        </Column>
+                        <Column
+                            hAlign="End"
+                            width="25%"
+                        >
+                            <Text text="{i18n>dialogTableCol3Text}" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{dialogData>LineItem}" />
+                                <Text text="{dialogData>Product}" />
+                                <Text text="{dialogData>Quantity}" />
+                                <ObjectNumber
+                                    number="{dialogData>TotalPrice}"
+                                    unit="EUR"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="{i18n>dialogSaveBtn}"
+                type="Emphasized"
+                press="onSaveSales"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>dialogCancelBtn}"
+                press="onCloseSalesDialog"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

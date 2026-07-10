@@ -1,0 +1,68 @@
+<mvc:View
+    controllerName="sap.ui5.project.controller.SalesTable"
+    xmlns='sap.m'
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
+>
+    <Table
+        id="salesTable"
+        items="{orders>/SalesOrders}"
+        growing="true"
+        growingScrollToLoad="true"
+        growingThreshold="10"
+    >
+        <headerToolbar>
+            <OverflowToolbar>
+                <Title
+                    text="{i18n>salesTableTitle}"
+                    level="H2"
+                />
+                <ToolbarSpacer />
+                <SearchField
+                    width="30%"
+                    search=".onSearchSales"
+                />
+                <Button
+                    icon="sap-icon://add"
+                    text="{i18n>addNewSaleBtnText}"
+                    type="Emphasized"
+                    press="onCreateSales"
+                />
+            </OverflowToolbar>
+        </headerToolbar>
+        <columns>
+            <Column>
+                <Text text="{i18n>salesCol1Text}" />
+            </Column>
+            <Column>
+                <Text text="{i18n>salesCol2Text}" />
+            </Column>
+            <Column hAlign="End">
+                <Text text="{i18n>salesCol3Text}" />
+            </Column>
+            <Column hAlign="Center">
+                <Text text="{i18n>salesCol4Text}" />
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem
+                type="Navigation"
+                press="onDetails"
+            >
+                <cells>
+                    <ObjectIdentifier title="{orders>OrderID}" />
+                    <Text text="{orders>CustomerName}" />
+                    <ObjectNumber
+                        number="{orders>NetAmount}"
+                        unit="{orders>Currency}"
+                    />
+
+                    <tnt:InfoLabel
+                        text="{orders>Status}"
+                        colorScheme="{path: 'orders>Status', formatter: '.formatter.statusColor'}"
+                    />
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</mvc:View>
