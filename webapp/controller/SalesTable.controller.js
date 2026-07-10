@@ -4,16 +4,24 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
-    "sap/m/MessageToast"
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageToast",
   ],
-  function (Controller, Filter, FilterOperator, Fragment, MessageToast) {
+  function (
+    Controller,
+    Filter,
+    FilterOperator,
+    Fragment,
+    JSONModel,
+    MessageToast,
+  ) {
     "use strict";
 
     return Controller.extend("sap.ui5.project.controller.SalesTable", {
       // Reference global formatting mapping explicitly
       formatter: window.myGlobalFormatter,
 
-      onCreateSales: function () {
+      onCreateSales() {
         var oView = this.getView();
 
         if (!this._pSalesDialog) {
@@ -29,8 +37,8 @@ sap.ui.define(
 
         // FIXED: Using arrow function safely preserves controller execution context 'this'
         this._pSalesDialog.then((oDialog) => {
-          var oDialogModel = new sap.ui.model.json.JSONModel({ Items: [] });
-          
+          var oDialogModel = new JSONModel({ Items: [] });
+
           // Set model directly on both view and dialog instance to guarantee synchronization
           oView.setModel(oDialogModel, "dialogData");
           oDialog.setModel(oDialogModel, "dialogData");
@@ -43,11 +51,7 @@ sap.ui.define(
         });
       },
 
-      /**
-       * Scans the current model array state and computes the next incremented ID value
-       * @private
-       */
-      _generateNextSalesId: function () {
+      _generateNextSalesId() {
         var oModel = this.getOwnerComponent().getModel("orders");
         var aOrders = oModel.getProperty("/SalesOrders") || [];
 
@@ -68,7 +72,7 @@ sap.ui.define(
         return "SO-2026-" + sPaddedNumber;
       },
 
-      onAddSalesItemRow: function () {
+      onAddSalesItemRow() {
         var sProduct = this.byId("inputSalesProduct").getValue();
         var sQty = this.byId("inputSalesQty").getValue();
         var sPrice = this.byId("inputSalesPrice").getValue();
@@ -100,7 +104,7 @@ sap.ui.define(
         this.byId("inputSalesPrice").setValue("");
       },
 
-      onSaveSales: function () {
+      onSaveSales() {
         var sId = this.byId("inputSalesId").getValue();
         var sCustomer = this.byId("inputCustomerName").getValue();
         var sStatus = this.byId("selectStatus").getSelectedKey();
@@ -115,14 +119,16 @@ sap.ui.define(
         }
 
         if (aItems.length === 0) {
-          MessageToast.show("Please add at least one line item row below before saving.");
+          MessageToast.show(
+            "Please add at least one line item row below before saving.",
+          );
           return;
         }
 
         // Sum NetAmount from staged item objects collection
         var nTotalSum = aItems.reduce(
           (acc, item) => acc + parseFloat(item.TotalPrice),
-          0
+          0,
         );
         var sFormattedAmount = nTotalSum.toLocaleString("en-US", {
           minimumFractionDigits: 2,
@@ -148,7 +154,7 @@ sap.ui.define(
         this.onCloseSalesDialog();
       },
 
-      onCloseSalesDialog: function () {
+      onCloseSalesDialog() {
         this.byId("idSalesDialog").close();
         this.byId("inputSalesId").setValue("");
         this.byId("inputCustomerName").setValue("");
@@ -157,7 +163,7 @@ sap.ui.define(
         this.byId("inputSalesPrice").setValue("");
       },
 
-      onSearchSales: function (oEvent) {
+      onSearchSales(oEvent) {
         var sQuery = oEvent.getParameter("query");
         var aFilters = sQuery
           ? [new Filter("CustomerName", FilterOperator.Contains, sQuery)]
@@ -165,7 +171,7 @@ sap.ui.define(
         this.byId("salesTable").getBinding("items").filter(aFilters);
       },
 
-      onDetails: function (oEvent) {
+      onDetails(oEvent) {
         var oItem = oEvent.getSource();
         var oContext = oItem.getBindingContext("orders");
         var sOrderId = oContext.getProperty("OrderID");
@@ -177,5 +183,5 @@ sap.ui.define(
         });
       },
     });
-  }
+  },
 );

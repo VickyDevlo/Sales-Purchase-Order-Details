@@ -4,7 +4,7 @@ sap.ui.define(
     "use strict";
 
     return Controller.extend("sap.ui5.project.controller.OrderDetail", {
-      onInit: function () {
+      onInit() {
         // Create a local detail view model to house active item arrays
         var oDetailModel = new JSONModel({ Items: [] });
         this.getView().setModel(oDetailModel, "detail");
@@ -14,8 +14,12 @@ sap.ui.define(
           .getRoute("RouteOrderDetail")
           .attachPatternMatched(this._onObjectMatched, this);
       },
+      onNavBack() {
+        var oRouter = this.getOwnerComponent().getRouter();
+        oRouter.navTo("RouteView1", {}, true);
+      },
 
-      _onObjectMatched: function (oEvent) {
+      _onObjectMatched(oEvent) {
         var sOrderType = oEvent.getParameter("arguments").orderType;
         var sOrderId = oEvent.getParameter("arguments").orderId;
 
@@ -41,7 +45,7 @@ sap.ui.define(
         this._populateOrderData(sOrderType, sOrderId);
       },
 
-      _populateOrderData: function (sOrderType, sOrderId) {
+      _populateOrderData(sOrderType, sOrderId) {
         var oModel =
           this.getView().getModel("orders") ||
           this.getOwnerComponent().getModel("orders");
@@ -92,11 +96,6 @@ sap.ui.define(
           // Clear table if no data found
           this.getView().getModel("detail").setProperty("/Items", []);
         }
-      },
-
-      onNavBack: function () {
-        var oRouter = this.getOwnerComponent().getRouter();
-        oRouter.navTo("RouteView1", {}, true /* replace history state */);
       },
     });
   },

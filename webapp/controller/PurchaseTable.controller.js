@@ -5,6 +5,7 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
+    "sap/ui/model/json/JSONModel",
     "../model/formatter",
   ],
   function (
@@ -13,12 +14,14 @@ sap.ui.define(
     FilterOperator,
     Fragment,
     MessageToast,
+    JSONModel,
     formatter,
   ) {
     "use strict";
 
     return Controller.extend("sap.ui5.project.controller.PurchaseTable", {
       formatter: formatter,
+
       onSearchPurchase(oEvent) {
         var sQuery = oEvent.getParameter("query");
         var aFilters = sQuery
@@ -27,7 +30,7 @@ sap.ui.define(
         this.byId("purchaseTable").getBinding("items").filter(aFilters);
       },
 
-      onCreatePurchase: function () {
+      onCreatePurchase() {
         var oView = this.getView();
 
         if (!this._pPurchaseDialog) {
@@ -40,10 +43,9 @@ sap.ui.define(
             return oDialog;
           });
         }
-
         this._pPurchaseDialog.then(
           function (oDialog) {
-            var oDialogModel = new sap.ui.model.json.JSONModel({ Items: [] });
+            var oDialogModel = new JSONModel({ Items: [] });
             oView.setModel(oDialogModel, "dialogData");
 
             oDialog.open();
@@ -55,11 +57,7 @@ sap.ui.define(
         );
       },
 
-      /**
-       * Scans the current model purchase array state and computes the next incremented ID value
-       * @private
-       */
-      _generateNextPurchaseId: function () {
+      _generateNextPurchaseId() {
         var oModel = this.getOwnerComponent().getModel("orders");
         var aOrders = oModel.getProperty("/PurchaseOrders") || [];
 
@@ -85,7 +83,7 @@ sap.ui.define(
         return "PO-990" + nNextNumber;
       },
 
-      onAddPOItemRow: function () {
+      onAddPOItemRow() {
         var sProduct = this.byId("inputPOProduct").getValue();
         var sQty = this.byId("inputPOQty").getValue();
         var sPrice = this.byId("inputPOPrice").getValue();
@@ -97,10 +95,9 @@ sap.ui.define(
 
         var oDialogModel = this.getView().getModel("dialogData");
         var aItems = oDialogModel.getProperty("/Items");
- ;
         var nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
 
-        aItems.push({ 
+        aItems.push({
           Product: sProduct,
           Quantity: parseInt(sQty, 10),
           UnitPrice: parseFloat(sPrice).toFixed(2),
@@ -114,7 +111,7 @@ sap.ui.define(
         this.byId("inputPOPrice").setValue("");
       },
 
-      onSavePurchase: function () {
+      onSavePurchase() {
         var sId = this.byId("inputPOId").getValue();
         var sSupplier = this.byId("inputSupplierName").getValue();
         var sStatus = this.byId("selectPOStatus").getSelectedKey();
@@ -163,7 +160,7 @@ sap.ui.define(
         this.onClosePurchaseDialog();
       },
 
-      onClosePurchaseDialog: function () {
+      onClosePurchaseDialog() {
         this.byId("idPurchaseDialog").close();
         this.byId("inputPOId").setValue("");
         this.byId("inputSupplierName").setValue("");
