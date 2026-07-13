@@ -1,13 +1,16 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.ui.layout.form"
-    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form" 
 >
     <Dialog
         id="idPurchaseDialog"
         title="{i18n>purchaseDialogTitle}"
-        contentWidth="600px"
+        contentWidth="70%"
+        contentHeight="auto"
+        stretchOnPhone="true"
+        draggable="true"
+        resizable="true"
         type="Message"
     >
         <content>
@@ -25,7 +28,7 @@
                         />
                         <Input
                             id="inputPOId"
-                            editable="false"
+                            enabled="false"
                         />
                         <Label
                             text="{i18n>purchaseDialogLabel2}"
@@ -60,7 +63,18 @@
                 <form:SimpleForm
                     editable="true"
                     layout="ResponsiveGridLayout"
-                    title="{i18n>dialogFormTitle}"
+                    columnsXL="2"
+                    columnsL="2"
+                    columnsM="1"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="4"
+                    labelSpanS="12"
+                    emptySpanXL="0"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    singleContainerFullSize="true"
                 >
                     <form:content>
                         <Label
@@ -75,28 +89,34 @@
                             text="{i18n>dialogFormLabel2}"
                             required="true"
                         />
-                        <layout:HorizontalLayout>
+                        <HBox
+                            wrap="Wrap"
+                            alignItems="Center"
+                        >
                             <Input
                                 id="inputPOQty"
                                 type="Number"
                                 placeholder="Qty"
-                                width="100px"
-                                class="sapUiTinyMarginEnd"
+                                width="8rem"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
                             />
+
                             <Input
                                 id="inputPOPrice"
                                 type="Number"
                                 placeholder="Price"
-                                width="150px"
+                                width="10rem"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
                             />
+
                             <Button
                                 icon="sap-icon://add"
                                 text="{i18n>dialogAddBtn}"
-                                type="Ghost"
+                                type="Emphasized"
                                 press="onAddPOItemRow"
-                                class="sapUiTinyMarginBegin"
+                                class="sapUiTinyMarginBottom"
                             />
-                        </layout:HorizontalLayout>
+                        </HBox>
                     </form:content>
                 </form:SimpleForm>
 
@@ -104,29 +124,35 @@
                 <Table
                     id="idStagedPOTable"
                     items="{dialogData>/Items}"
+                    autoPopinMode="true"
+                    growing="true"
+                    growingThreshold="5"
                     noDataText="{i18n>dialogTableNoDataText}"
                 >
                     <columns>
-                       
-                        <Column width="45%">
+                        <Column importance="High">
                             <Text text="{i18n>dialogTableCol1Text}" />
                         </Column>
+
                         <Column
                             hAlign="End"
-                            width="15%"
+                            importance="Medium"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
                         >
                             <Text text="{i18n>dialogTableCol2Text}" />
                         </Column>
+
                         <Column
                             hAlign="End"
-                            width="25%"
+                            importance="High"
                         >
                             <Text text="{i18n>dialogTableCol3Text}" />
                         </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
-                            <cells> 
+                            <cells>
                                 <Text text="{dialogData>Product}" />
                                 <Text text="{dialogData>Quantity}" />
                                 <ObjectNumber

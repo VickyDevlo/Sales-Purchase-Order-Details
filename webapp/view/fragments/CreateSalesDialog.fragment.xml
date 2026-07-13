@@ -2,12 +2,15 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
-    xmlns:layout="sap.ui.layout"
 >
     <Dialog
         id="idSalesDialog"
         title="{i18n>salesDialogTitle}"
-        contentWidth="600px"
+        contentWidth="70%"
+        contentHeight="auto"
+        stretchOnPhone="true"
+        draggable="true"
+        resizable="true"
         type="Message"
     >
         <content>
@@ -25,7 +28,7 @@
                         />
                         <Input
                             id="inputSalesId"
-                            editable="false"
+                            enabled="false"
                         />
                         <Label
                             text="{i18n>salesDialogLabel2}"
@@ -75,29 +78,34 @@
                             text="{i18n>dialogFormLabel2}"
                             required="true"
                         />
-                        <layout:HorizontalLayout>
+                        <HBox
+                            wrap="Wrap"
+                            alignItems="Center"
+                        >
                             <Input
                                 id="inputSalesQty"
                                 type="Number"
                                 placeholder="Qty"
-                                width="100px"
-                                class="sapUiTinyMarginEnd"
+                                width="8rem"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
                             />
-                            
+
                             <Input
                                 id="inputSalesPrice"
                                 type="Number"
                                 placeholder="Price"
-                                width="150px"
+                                width="10rem"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
                             />
+
                             <Button
                                 icon="sap-icon://add"
                                 text="{i18n>dialogAddBtn}"
-                                type="Ghost"
+                                type="Emphasized"
                                 press="onAddSalesItemRow"
-                                class="sapUiTinyMarginBegin"
+                                class="sapUiTinyMarginBottom"
                             />
-                        </layout:HorizontalLayout>
+                        </HBox>
                     </form:content>
                 </form:SimpleForm>
 
@@ -106,21 +114,27 @@
                     id="idStagedSalesTable"
                     items="{dialogData>/Items}"
                     noDataText="{i18n>dialogTableNoDataText}"
+                    autoPopinMode="true"
+                    growing="true"
+                    growingThreshold="5"
                 >
                     <columns>
-                        
-                        <Column width="45%">
+                        <Column importance="High">
                             <Text text="{i18n>dialogTableCol1Text}" />
                         </Column>
+
                         <Column
                             hAlign="End"
-                            width="15%"
+                            importance="Medium"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
                         >
                             <Text text="{i18n>dialogTableCol2Text}" />
                         </Column>
+
                         <Column
                             hAlign="End"
-                            width="25%"
+                            importance="High"
                         >
                             <Text text="{i18n>dialogTableCol3Text}" />
                         </Column>
@@ -128,7 +142,6 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{dialogData>LineItem}" />
                                 <Text text="{dialogData>Product}" />
                                 <Text text="{dialogData>Quantity}" />
                                 <ObjectNumber

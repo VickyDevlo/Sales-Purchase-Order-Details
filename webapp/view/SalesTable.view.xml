@@ -2,6 +2,7 @@
     controllerName="sap.ui5.project.controller.SalesTable"
     xmlns='sap.m'
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
     xmlns:tnt="sap.tnt"
 >
     <Table
@@ -10,6 +11,7 @@
         growing="true"
         growingThreshold="10"
         growingScrollToLoad="true"
+        autoPopinMode="true"
     >
         <headerToolbar>
             <OverflowToolbar>
@@ -17,44 +19,87 @@
                     text="{i18n>salesTableTitle}"
                     level="H2"
                 />
+
                 <ToolbarSpacer />
+
                 <SearchField
-                    width="30%"
+                    width="18rem"
                     search=".onSearchSales"
-                />
+                >
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            priority="Low"
+                            moveToOverflow="true"
+                        />
+                    </layoutData>
+                </SearchField>
+
                 <Button
                     icon="sap-icon://add"
                     text="{i18n>addNewSaleBtnText}"
                     type="Emphasized"
                     press="onCreateSales"
-                />
+                >
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            priority="Low"
+                            moveToOverflow="true"
+                        />
+                    </layoutData>
+                </Button>
             </OverflowToolbar>
         </headerToolbar>
+
         <columns>
-            <Column>
+            <Column importance="High">
                 <Text text="{i18n>salesCol1Text}" />
             </Column>
-            <Column>
+
+            <Column
+                importance="High"
+                minScreenWidth="Tablet"
+                demandPopin="true"
+            >
                 <Text text="{i18n>salesCol2Text}" />
             </Column>
-            <Column hAlign="End">
+
+            <Column
+                hAlign="End"
+                importance="Medium"
+                minScreenWidth="Tablet"
+                demandPopin="true"
+            >
                 <Text text="{i18n>salesCol3Text}" />
             </Column>
-            <Column hAlign="Center">
+
+            <Column
+                hAlign="Center"
+                importance="Low"
+                minScreenWidth="Desktop"
+                demandPopin="true"
+            >
                 <Text text="{i18n>salesCol4Text}" />
             </Column>
-            <Column hAlign="Center">
+
+            <Column
+                hAlign="Center"
+                importance="High"
+            >
                 <Text text="{i18n>salesCol5Text}" />
             </Column>
         </columns>
+
         <items>
             <ColumnListItem
                 type="Navigation"
                 press="onDetails"
+                vAlign="Middle"
             >
                 <cells>
                     <ObjectIdentifier title="{orders>OrderID}" />
+
                     <Text text="{orders>CustomerName}" />
+
                     <ObjectNumber
                         number="{orders>NetAmount}"
                         unit="{orders>Currency}"
@@ -62,9 +107,14 @@
 
                     <tnt:InfoLabel
                         text="{orders>Status}"
-                        colorScheme="{path: 'orders>Status', formatter: '.formatter.statusColor'}"
+                        colorScheme="{path:'orders>Status', formatter:'.formatter.statusColor'}"
                     />
-                    <HBox justifyContent="Center">
+
+                    <HBox
+                        justifyContent="Center"
+                        alignItems="Center"
+                        wrap="Wrap"
+                    >
                         <Button
                             icon="sap-icon://edit"
                             type="Transparent"

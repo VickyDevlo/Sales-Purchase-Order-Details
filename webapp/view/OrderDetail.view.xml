@@ -68,6 +68,9 @@
                     id="idItemsTable"
                     items="{detail>/Items}"
                     class="sapUiMediumMarginTop"
+                    autoPopinMode="true"
+                    growing="true"
+                    growingScrollToLoad="true"
                 >
                     <headerToolbar>
                         <OverflowToolbar>
@@ -77,38 +80,54 @@
                             />
                         </OverflowToolbar>
                     </headerToolbar>
+
                     <columns>
-                        <Column width="40%">
+                        <Column importance="High">
                             <Text text="{i18n>colText1}" />
                         </Column>
+
                         <Column
                             hAlign="Center"
-                            width="15%"
+                            importance="Medium"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
                         >
                             <Text text="{i18n>colText2}" />
                         </Column>
+
                         <Column
                             hAlign="Center"
-                            width="15%"
+                            importance="Medium"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
                         >
                             <Text text="{i18n>colText3}" />
                         </Column>
+
                         <Column
                             hAlign="End"
-                            width="20%"
+                            importance="High"
                         >
                             <Text text="{i18n>colText4}" />
                         </Column>
                     </columns>
+
                     <items>
                         <ColumnListItem>
                             <cells>
                                 <ObjectIdentifier title="{detail>Product}" />
-                                <Text text="{detail>Quantity}" />
-                                <ObjectNumber number="{detail>UnitPrice}" />
+
+                                <ObjectNumber number="{detail>Quantity}" />
+
+                                <ObjectNumber
+                                    number="{detail>UnitPrice}"
+                                    unit="EUR"
+                                />
+
                                 <ObjectNumber
                                     number="{detail>TotalPrice}"
                                     unit="EUR"
+                                    emphasized="true"
                                 />
                             </cells>
                         </ColumnListItem>

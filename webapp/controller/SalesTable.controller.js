@@ -90,12 +90,10 @@ sap.ui.define(
 
         var oDialogModel = this.getView().getModel("dialogData");
         var aItems = oDialogModel.getProperty("/Items") || [];
-
-        var sLineItemNum = ((aItems.length + 1) * 10).toString();
+ 
         var nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
 
-        aItems.push({
-          LineItem: sLineItemNum,
+        aItems.push({ 
           Product: sProduct,
           Quantity: parseInt(sQty, 10),
           UnitPrice: parseFloat(sPrice).toFixed(2),
