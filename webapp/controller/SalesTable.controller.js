@@ -24,24 +24,22 @@ sap.ui.define(
       onCreateSales() {
         var oView = this.getView();
 
+        // Open & Close The Dialog
         if (!this._pSalesDialog) {
           this._pSalesDialog = Fragment.load({
             id: oView.getId(),
             name: "sap.ui5.project.view.fragments.CreateSalesDialog",
             controller: this,
-          }).then(function (oDialog) {
+          }).then((oDialog) => {
             oView.addDependent(oDialog);
             return oDialog;
           });
         }
 
-        // FIXED: Using arrow function safely preserves controller execution context 'this'
         this._pSalesDialog.then((oDialog) => {
           var oDialogModel = new JSONModel({ Items: [] });
 
-          // Set model directly on both view and dialog instance to guarantee synchronization
           oView.setModel(oDialogModel, "dialogData");
-          oDialog.setModel(oDialogModel, "dialogData");
 
           oDialog.open();
 
@@ -55,21 +53,31 @@ sap.ui.define(
         var oModel = this.getOwnerComponent().getModel("orders");
         var aOrders = oModel.getProperty("/SalesOrders") || [];
 
+        // Get current year dynamically
+        var sYear = new Date().getFullYear().toString();
+
         if (aOrders.length === 0) {
-          return "SO-2026-001";
+          return "SO-" + sYear + "-001";
         }
 
-        var aNumbers = aOrders.map(function (oOrder) {
-          var aParts = oOrder.OrderID.split("-");
-          var sLastPart = aParts[aParts.length - 1];
-          return parseInt(sLastPart, 10);
-        });
+        var aNumbers = aOrders
+          .filter(function (oOrder) {
+            return (
+              oOrder.OrderID &&
+              oOrder.OrderID.indexOf("SO-" + sYear + "-") === 0
+            );
+          })
+          .map(function (oOrder) {
+            var aParts = oOrder.OrderID.split("-");
+            return parseInt(aParts[aParts.length - 1], 10);
+          });
 
-        var nMaxNumber = Math.max.apply(null, aNumbers);
+        var nMaxNumber =
+          aNumbers.length > 0 ? Math.max.apply(null, aNumbers) : 0;
         var nNextNumber = nMaxNumber + 1;
         var sPaddedNumber = nNextNumber.toString().padStart(3, "0");
 
-        return "SO-2026-" + sPaddedNumber;
+        return "SO-" + sYear + "-" + sPaddedNumber;
       },
 
       onAddSalesItemRow() {
@@ -149,6 +157,9 @@ sap.ui.define(
         // Appends structural order context onto the bottom of the data grid rows array
         aSalesOrders.push(oNewOrder);
         oModel.setProperty("/SalesOrders", aSalesOrders);
+
+        // Save to localStorage
+        this.getOwnerComponent().saveOrdersData();
 
         MessageToast.show("Sales Order " + sId + " saved successfully!");
         this.onCloseSalesDialog();

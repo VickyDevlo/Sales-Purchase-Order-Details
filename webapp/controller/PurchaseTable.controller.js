@@ -38,7 +38,7 @@ sap.ui.define(
             id: oView.getId(),
             name: "sap.ui5.project.view.fragments.CreatePurchaseDialog",
             controller: this,
-          }).then(function (oDialog) {
+          }).then((oDialog) => {
             oView.addDependent(oDialog);
             return oDialog;
           });
@@ -153,6 +153,9 @@ sap.ui.define(
 
         aPurchaseOrders.push(oNewPO);
         oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
+
+        // Save to localStorage
+        this.getOwnerComponent().saveOrdersData();
 
         sap.m.MessageToast.show(
           "Purchase Order " + sId + " saved successfully!",

@@ -8,8 +8,8 @@
         id="salesTable"
         items="{orders>/SalesOrders}"
         growing="true"
-        growingScrollToLoad="true"
         growingThreshold="10"
+        growingScrollToLoad="true"
     >
         <headerToolbar>
             <OverflowToolbar>
