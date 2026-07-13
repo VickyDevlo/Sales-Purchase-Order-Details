@@ -43,6 +43,9 @@
             <Column hAlign="Center">
                 <Text text="{i18n>purchaseCol4Text}" />
             </Column>
+            <Column hAlign="Center">
+                <Text text="{i18n>purchaseCol5Text}" />
+            </Column>
         </columns>
         <items>
             <ColumnListItem
@@ -58,6 +61,19 @@
                     />
                      <tnt:InfoLabel text="{orders>Status}" colorScheme="{path: 'orders>Status', formatter: '.formatter.statusColor'}"/>
                 </cells>
+                <HBox justifyContent="Center">
+        <Button
+            icon="sap-icon://edit"
+            type="Transparent"
+            press="onEditPurchase"
+        />
+
+        <Button
+            icon="sap-icon://delete"
+            type="Transparent"
+            press="onDeletePurchase"
+        />
+    </HBox>
             </ColumnListItem>
         </items>
     </Table>

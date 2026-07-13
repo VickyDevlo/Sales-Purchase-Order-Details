@@ -43,6 +43,9 @@
             <Column hAlign="Center">
                 <Text text="{i18n>salesCol4Text}" />
             </Column>
+            <Column hAlign="Center">
+                <Text text="{i18n>salesCol5Text}" />
+            </Column>
         </columns>
         <items>
             <ColumnListItem
@@ -61,6 +64,19 @@
                         text="{orders>Status}"
                         colorScheme="{path: 'orders>Status', formatter: '.formatter.statusColor'}"
                     />
+                    <HBox justifyContent="Center">
+                        <Button
+                            icon="sap-icon://edit"
+                            type="Transparent"
+                            press="onEditSales"
+                        />
+
+                        <Button
+                            icon="sap-icon://delete"
+                            type="Transparent"
+                            press="onDeleteSales"
+                        />
+                    </HBox>
                 </cells>
             </ColumnListItem>
         </items>

@@ -6,6 +6,7 @@ sap.ui.define(
     "sap/ui/core/Fragment",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
+    "sap/m/MessageBox",
   ],
   function (
     Controller,
@@ -14,6 +15,7 @@ sap.ui.define(
     Fragment,
     JSONModel,
     MessageToast,
+    MessageBox,
   ) {
     "use strict";
 
@@ -53,31 +55,27 @@ sap.ui.define(
         var oModel = this.getOwnerComponent().getModel("orders");
         var aOrders = oModel.getProperty("/SalesOrders") || [];
 
-        // Get current year dynamically
         var sYear = new Date().getFullYear().toString();
 
-        if (aOrders.length === 0) {
+        // Get only current year's orders
+        var aCurrentYearOrders = aOrders.filter(function (oOrder) {
+          return oOrder.OrderID && oOrder.OrderID.split("-")[1] === sYear;
+        });
+
+        // If no orders for this year, start from 001
+        if (aCurrentYearOrders.length === 0) {
           return "SO-" + sYear + "-001";
         }
 
-        var aNumbers = aOrders
-          .filter(function (oOrder) {
-            return (
-              oOrder.OrderID &&
-              oOrder.OrderID.indexOf("SO-" + sYear + "-") === 0
-            );
-          })
-          .map(function (oOrder) {
-            var aParts = oOrder.OrderID.split("-");
-            return parseInt(aParts[aParts.length - 1], 10);
-          });
+        // Find the highest sequence number for the current year
+        var nMax = Math.max.apply(
+          null,
+          aCurrentYearOrders.map(function (oOrder) {
+            return parseInt(oOrder.OrderID.split("-")[2], 10);
+          }),
+        );
 
-        var nMaxNumber =
-          aNumbers.length > 0 ? Math.max.apply(null, aNumbers) : 0;
-        var nNextNumber = nMaxNumber + 1;
-        var sPaddedNumber = nNextNumber.toString().padStart(3, "0");
-
-        return "SO-" + sYear + "-" + sPaddedNumber;
+        return "SO-" + sYear + "-" + String(nMax + 1).padStart(3, "0");
       },
 
       onAddSalesItemRow() {
@@ -113,6 +111,9 @@ sap.ui.define(
       },
 
       onSaveSales() {
+        var oModel = this.getOwnerComponent().getModel("orders");
+        var aSalesOrders = oModel.getProperty("/SalesOrders") || [];
+
         var sId = this.byId("inputSalesId").getValue();
         var sCustomer = this.byId("inputCustomerName").getValue();
         var sStatus = this.byId("selectStatus").getSelectedKey();
@@ -142,9 +143,6 @@ sap.ui.define(
           minimumFractionDigits: 2,
         });
 
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aSalesOrders = oModel.getProperty("/SalesOrders") || [];
-
         var oNewOrder = {
           OrderID: sId,
           CustomerName: sCustomer,
@@ -155,7 +153,21 @@ sap.ui.define(
         };
 
         // Appends structural order context onto the bottom of the data grid rows array
-        aSalesOrders.push(oNewOrder);
+        if (this._editingOrder) {
+          var iIndex = aSalesOrders.findIndex(
+            function (item) {
+              return item.OrderID === this._editingOrder.OrderID;
+            }.bind(this),
+          );
+
+          if (iIndex > -1) {
+            aSalesOrders[iIndex] = oNewOrder;
+          }
+
+          this._editingOrder = null;
+        } else {
+          aSalesOrders.push(oNewOrder);
+        }
         oModel.setProperty("/SalesOrders", aSalesOrders);
 
         // Save to localStorage
@@ -167,11 +179,20 @@ sap.ui.define(
 
       onCloseSalesDialog() {
         this.byId("idSalesDialog").close();
+
+        this.byId("inputSalesId").setEditable(true);
+
         this.byId("inputSalesId").setValue("");
         this.byId("inputCustomerName").setValue("");
         this.byId("inputSalesProduct").setValue("");
         this.byId("inputSalesQty").setValue("");
         this.byId("inputSalesPrice").setValue("");
+
+        this.byId("selectStatus").setSelectedKey("");
+
+        this.getView().getModel("dialogData").setProperty("/Items", []);
+
+        this._editingOrder = null;
       },
 
       onSearchSales(oEvent) {
@@ -192,6 +213,64 @@ sap.ui.define(
           orderType: "sales",
           orderId: sOrderId,
         });
+      },
+
+      onEditSales(oEvent) {
+        let oContext = oEvent.getSource().getBindingContext("orders");
+        let oOrder = oContext.getObject();
+
+        this._editingOrder = oOrder;
+
+        this.onCreateSales();
+
+        this._pSalesDialog.then(
+          function () {
+            this.byId("inputSalesId").setValue(oOrder.OrderID);
+            this.byId("inputSalesId").setEditable(false);
+
+            this.byId("inputCustomerName").setValue(oOrder.CustomerName);
+
+            this.byId("selectStatus").setSelectedKey(oOrder.Status);
+
+            var oDialogModel = this.getView().getModel("dialogData");
+
+            oDialogModel.setProperty(
+              "/Items",
+              JSON.parse(JSON.stringify(oOrder.Items)),
+            );
+          }.bind(this),
+        );
+      },
+
+      onDeleteSales(oEvent) {
+        let oContext = oEvent.getSource().getBindingContext("orders");
+        let oOrder = oContext.getObject();
+
+        let oModel = this.getOwnerComponent().getModel("orders");
+        let aOrders = oModel.getProperty("/SalesOrders");
+
+        MessageBox.confirm(
+          "Are you sure you want to delete this Sales order?",
+          {
+            onClose: function (sAction) {
+              if (sAction === MessageBox.Action.OK) {
+                var iIndex = aOrders.findIndex(function (item) {
+                  return item.OrderID === oOrder.OrderID;
+                });
+
+                if (iIndex > -1) {
+                  aOrders.splice(iIndex, 1);
+
+                  oModel.setProperty("/SalesOrders", aOrders);
+
+                  this.getOwnerComponent().saveOrdersData();
+
+                  MessageToast.show("Sales Order deleted successfully.");
+                }
+              }
+            }.bind(this),
+          },
+        );
       },
     });
   },

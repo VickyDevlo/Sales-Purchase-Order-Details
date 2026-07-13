@@ -7,6 +7,7 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
+    "sap/m/MessageBox",
   ],
   function (
     Controller,
@@ -16,6 +17,7 @@ sap.ui.define(
     MessageToast,
     JSONModel,
     formatter,
+    MessageBox,
   ) {
     "use strict";
 
@@ -151,7 +153,18 @@ sap.ui.define(
           Items: aItems,
         };
 
-        aPurchaseOrders.push(oNewPO);
+        if (this._editingIndex !== undefined && this._editingIndex !== null) {
+          aPurchaseOrders[this._editingIndex] = oNewPO;
+        } else {
+          aPurchaseOrders.push(oNewPO);
+        }
+
+        oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
+
+        // Save to localStorage
+        this.getOwnerComponent().saveOrdersData();
+
+        this._editingIndex = null;
         oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
 
         // Save to localStorage
@@ -165,8 +178,16 @@ sap.ui.define(
 
       onClosePurchaseDialog() {
         this.byId("idPurchaseDialog").close();
+
+        this.byId("inputPOId").setEditable(true);
+
         this.byId("inputPOId").setValue("");
         this.byId("inputSupplierName").setValue("");
+        this.byId("selectPOStatus").setSelectedKey("");
+
+        this.getView().getModel("dialogData").setProperty("/Items", []);
+
+        this._editingIndex = null;
       },
       onDetails(oEvent) {
         var oItem = oEvent.getSource();
@@ -178,6 +199,55 @@ sap.ui.define(
           orderType: "purchase",
           orderId: sPOId,
         });
+      },
+      onEditPurchase: function (oEvent) {
+        var oContext = oEvent.getSource().getBindingContext("orders");
+        var oPurchase = oContext.getObject();
+
+        this._editingIndex = parseInt(oContext.getPath().split("/").pop(), 10);
+
+        this.onCreatePurchase();
+
+        this._pPurchaseDialog.then(
+          function () {
+            this.byId("inputPOId").setValue(oPurchase.PONumber);
+            this.byId("inputPOId").setEditable(false);
+
+            this.byId("inputSupplierName").setValue(oPurchase.SupplierName);
+            this.byId("selectPOStatus").setSelectedKey(oPurchase.Status);
+
+            var oDialogModel = this.getView().getModel("dialogData");
+
+            oDialogModel.setProperty(
+              "/Items",
+              JSON.parse(JSON.stringify(oPurchase.Items)),
+            );
+          }.bind(this),
+        );
+      },
+      onDeletePurchase: function (oEvent) {
+        var oContext = oEvent.getSource().getBindingContext("orders");
+        var iIndex = parseInt(oContext.getPath().split("/").pop(), 10);
+
+        var oModel = this.getOwnerComponent().getModel("orders");
+        var aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
+
+        MessageBox.confirm(
+          "Are you sure you want to delete this Purchase Order?",
+          {
+            onClose: function (sAction) {
+              if (sAction === MessageBox.Action.OK) {
+                aPurchaseOrders.splice(iIndex, 1);
+
+                oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
+
+                this.getOwnerComponent().saveOrdersData();
+
+                MessageToast.show("Purchase Order deleted successfully.");
+              }
+            }.bind(this),
+          },
+        );
       },
     });
   },
