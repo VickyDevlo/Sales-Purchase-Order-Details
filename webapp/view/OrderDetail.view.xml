@@ -71,6 +71,7 @@
                     autoPopinMode="true"
                     growing="true"
                     growingScrollToLoad="true"
+                    alternateRowColors="true"
                 >
                     <headerToolbar>
                         <OverflowToolbar>

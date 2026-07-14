@@ -10,6 +10,7 @@
         growing="true"
         growingScrollToLoad="true"
         growingThreshold="10"
+        alternateRowColors="true"
         autoPopinMode="true"
     >
         <headerToolbar>
