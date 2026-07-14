@@ -42,12 +42,14 @@ sap.ui.define(
           var oDialogModel = new JSONModel({ Items: [] });
 
           oView.setModel(oDialogModel, "dialogData");
+          oDialog.setInitialFocus(this.byId("inputCustomerName"));
 
           oDialog.open();
 
           // Automatically generate and set the next clean sequence ID
           var sNextId = this._generateNextSalesId();
           this.byId("inputSalesId").setValue(sNextId);
+          this.byId("inputCustomerName").setEnabled(true);
         });
       },
 
@@ -90,10 +92,10 @@ sap.ui.define(
 
         var oDialogModel = this.getView().getModel("dialogData");
         var aItems = oDialogModel.getProperty("/Items") || [];
- 
+
         var nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
 
-        aItems.push({ 
+        aItems.push({
           Product: sProduct,
           Quantity: parseInt(sQty, 10),
           UnitPrice: parseFloat(sPrice).toFixed(2),
@@ -196,7 +198,7 @@ sap.ui.define(
       onSearchSales(oEvent) {
         var sQuery = oEvent.getParameter("query");
         var aFilters = sQuery
-          ? [new Filter("CustomerName", FilterOperator.Contains, sQuery)]
+          ? [new Filter("OrderID", FilterOperator.Contains, sQuery)]
           : [];
         this.byId("salesTable").getBinding("items").filter(aFilters);
       },
@@ -221,11 +223,13 @@ sap.ui.define(
 
         this.onCreateSales();
 
-        this._pSalesDialog.then(
-          function () {
+        this._pSalesDialog.then(function (oDialog) {
+
+            oDialog.setInitialFocus(this.byId("selectStatus"));
+
             this.byId("inputSalesId").setValue(oOrder.OrderID);
             this.byId("inputSalesId").setEditable(false);
-
+            this.byId("inputCustomerName").setEnabled(false);
             this.byId("inputCustomerName").setValue(oOrder.CustomerName);
 
             this.byId("selectStatus").setSelectedKey(oOrder.Status);

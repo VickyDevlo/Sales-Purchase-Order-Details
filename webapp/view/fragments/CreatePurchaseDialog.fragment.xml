@@ -1,7 +1,7 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.ui.layout.form" 
+    xmlns:form="sap.ui.layout.form"
 >
     <Dialog
         id="idPurchaseDialog"
@@ -26,10 +26,7 @@
                             text="{i18n>purchaseDialogLabel1}"
                             required="true"
                         />
-                        <Input
-                            id="inputPOId"
-                            enabled="false"
-                        />
+                        <Input id="inputPOId" />
                         <Label
                             text="{i18n>purchaseDialogLabel2}"
                             required="true"
@@ -37,6 +34,7 @@
                         <Input
                             id="inputSupplierName"
                             placeholder="e.g. Nexus Logistics"
+                            enabled="{dialogData>/someProperty}"
                         />
                         <Label text="{i18n>purchaseDialogLabel3}" />
                         <Select
@@ -54,6 +52,10 @@
                             <core:Item
                                 key="Approved"
                                 text="Approved"
+                            />
+                            <core:Item
+                                key="Cancelled"
+                                text="Cancelled"
                             />
                         </Select>
                     </form:content>

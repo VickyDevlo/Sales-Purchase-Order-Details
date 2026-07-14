@@ -8,7 +8,6 @@
         title="{i18n>salesDialogTitle}"
         contentWidth="70%"
         contentHeight="auto"
-        stretchOnPhone="true"
         draggable="true"
         resizable="true"
         type="Message"
@@ -37,6 +36,7 @@
                         <Input
                             id="inputCustomerName"
                             placeholder="e.g. Horizon Ltd"
+                            enabled="{dialogData>/someProperty}"
                         />
                         <Label text="{i18n>salesDialogLabel3}" />
                         <Select
@@ -54,6 +54,10 @@
                             <core:Item
                                 key="Delivered"
                                 text="Delivered"
+                            />
+                            <core:Item
+                                key="Cancelled"
+                                text="Cancelled"
                             />
                         </Select>
                     </form:content>

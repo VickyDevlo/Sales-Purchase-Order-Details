@@ -26,9 +26,11 @@ sap.ui.define(
 
       onSearchPurchase(oEvent) {
         var sQuery = oEvent.getParameter("query");
+        
         var aFilters = sQuery
-          ? [new Filter("SupplierName", FilterOperator.Contains, sQuery)]
-          : [];
+        ? [new Filter("PONumber", FilterOperator.Contains, sQuery)]
+        : [];
+        
         this.byId("purchaseTable").getBinding("items").filter(aFilters);
       },
 
@@ -49,7 +51,9 @@ sap.ui.define(
           function (oDialog) {
             var oDialogModel = new JSONModel({ Items: [] });
             oView.setModel(oDialogModel, "dialogData");
-
+            this.byId("inputPOId").setEnabled(false);
+            oDialog.setInitialFocus(this.byId("inputSupplierName"));
+            this.byId("inputSupplierName").setEnabled(true);
             oDialog.open();
 
             // DYNAMIC: Automatically generate and set the next clean sequence ID
@@ -179,7 +183,7 @@ sap.ui.define(
       onClosePurchaseDialog() {
         this.byId("idPurchaseDialog").close();
 
-        this.byId("inputPOId").setEditable(true);
+        this.byId("inputPOId").setEnabled(true);
 
         this.byId("inputPOId").setValue("");
         this.byId("inputSupplierName").setValue("");
@@ -200,7 +204,7 @@ sap.ui.define(
           orderId: sPOId,
         });
       },
-      onEditPurchase: function (oEvent) {
+      onEditPurchase(oEvent) {
         var oContext = oEvent.getSource().getBindingContext("orders");
         var oPurchase = oContext.getObject();
 
@@ -209,9 +213,11 @@ sap.ui.define(
         this.onCreatePurchase();
 
         this._pPurchaseDialog.then(
-          function () {
+          function (oDialog) {
             this.byId("inputPOId").setValue(oPurchase.PONumber);
-            this.byId("inputPOId").setEditable(false);
+            this.byId("inputPOId").setEnabled(false);
+            this.byId("inputSupplierName").setEnabled(false);
+            oDialog.setInitialFocus(this.byId("selectPOStatus"));
 
             this.byId("inputSupplierName").setValue(oPurchase.SupplierName);
             this.byId("selectPOStatus").setSelectedKey(oPurchase.Status);
@@ -225,7 +231,7 @@ sap.ui.define(
           }.bind(this),
         );
       },
-      onDeletePurchase: function (oEvent) {
+      onDeletePurchase(oEvent) {
         var oContext = oEvent.getSource().getBindingContext("orders");
         var iIndex = parseInt(oContext.getPath().split("/").pop(), 10);
 

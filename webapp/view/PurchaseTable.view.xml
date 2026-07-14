@@ -4,7 +4,6 @@
     xmlns="sap.m"
     xmlns:tnt="sap.tnt"
 >
-
     <Table
         id="purchaseTable"
         items="{orders>/PurchaseOrders}"
@@ -13,10 +12,8 @@
         growingThreshold="10"
         autoPopinMode="true"
     >
-
         <headerToolbar>
             <OverflowToolbar>
-
                 <Title
                     text="{i18n>purchaseTableTitle}"
                     level="H2"
@@ -27,12 +24,10 @@
                 <SearchField
                     width="18rem"
                     search=".onSearchPurchase"
+                    placeholder="{i18n>purchasePlaceHolder}"
                 >
                     <layoutData>
-                        <OverflowToolbarLayoutData
-                            priority="Low"
-                            moveToOverflow="true"
-                        />
+                        <OverflowToolbarLayoutData priority="Low" />
                     </layoutData>
                 </SearchField>
 
@@ -49,12 +44,10 @@
                         />
                     </layoutData>
                 </Button>
-
             </OverflowToolbar>
         </headerToolbar>
 
         <columns>
-
             <Column importance="High">
                 <Text text="{i18n>purchaseCol1Text}" />
             </Column>
@@ -91,26 +84,18 @@
             >
                 <Text text="{i18n>purchaseCol5Text}" />
             </Column>
-
         </columns>
 
         <items>
-
             <ColumnListItem
                 type="Navigation"
                 press="onDetails"
                 vAlign="Middle"
             >
-
                 <cells>
+                    <ObjectIdentifier title="{orders>PONumber}" />
 
-                    <ObjectIdentifier
-                        title="{orders>PONumber}"
-                    />
-
-                    <Text
-                        text="{orders>SupplierName}"
-                    />
+                    <Text text="{orders>SupplierName}" />
 
                     <ObjectNumber
                         number="{orders>TotalCost}"
@@ -139,13 +124,8 @@
                             press="onDeletePurchase"
                         />
                     </HBox>
-
                 </cells>
-
             </ColumnListItem>
-
         </items>
-
     </Table>
-
 </mvc:View>

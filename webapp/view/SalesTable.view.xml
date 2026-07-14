@@ -25,12 +25,10 @@
                 <SearchField
                     width="18rem"
                     search=".onSearchSales"
+                    placeholder="{i18n>salesPlaceHolder}"
                 >
                     <layoutData>
-                        <OverflowToolbarLayoutData
-                            priority="Low"
-                            moveToOverflow="true"
-                        />
+                        <OverflowToolbarLayoutData priority="Low" />
                     </layoutData>
                 </SearchField>
 
