@@ -9,13 +9,9 @@
 >
     <Page
         id="page"
-        title="{i18n>appTitle}"
+        title="{i18n>dashboardTitle}"
     >
-        <f:DynamicPage
-            id="dynamicPageId"
-            toggleHeaderOnTitleClick="true"
-            fitContent="true"
-        >
+        <f:DynamicPage id="dynamicPageId">
             <f:content>
                 <!-- Tab Container that houses the decoupled views -->
                 <IconTabBar
