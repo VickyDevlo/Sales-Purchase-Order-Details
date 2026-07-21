@@ -38,6 +38,7 @@ sap.ui.define(
         this._pSalesDialog.then((oDialog) => {
           var oDialogModel = new JSONModel({
             dialogTitle: "Create New Sales Order",
+            btnText: "Save",
             Items: [],
           });
 
@@ -236,6 +237,7 @@ sap.ui.define(
 
             var oDialogModel = this.getView().getModel("dialogData");
             oDialogModel.setProperty("/dialogTitle", "Update Sales Order");
+            oDialogModel.setProperty("/btnText", "Update");
 
             oDialogModel.setProperty(
               "/Items",
