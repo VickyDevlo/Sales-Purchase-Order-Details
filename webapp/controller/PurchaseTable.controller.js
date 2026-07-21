@@ -23,9 +23,9 @@ sap.ui.define(
       formatter: formatter,
 
       onSearchPurchase(oEvent) {
-        var sQuery = oEvent.getParameter("query");
+        const sQuery = oEvent.getParameter("query");
 
-        var aFilters = sQuery
+        let aFilters = sQuery
           ? [new Filter("PONumber", FilterOperator.Contains, sQuery)]
           : [];
 
@@ -33,7 +33,7 @@ sap.ui.define(
       },
 
       onCreatePurchase() {
-        var oView = this.getView();
+        const oView = this.getView();
 
         if (!this._pPurchaseDialog) {
           this._pPurchaseDialog = this.loadFragment({
@@ -44,65 +44,36 @@ sap.ui.define(
             return oDialog;
           });
         }
-        this._pPurchaseDialog.then(
-          function (oDialog) {
-            var oDialogModel = new JSONModel({
-              dialogTitle: "Create New Purchase Order",
-              btnText:"Save",
-              Items: [],
-            });
-            oView.setModel(oDialogModel, "dialogData");
-            this.byId("inputPOId").setEnabled(false);
-            oDialog.setInitialFocus(this.byId("inputSupplierName"));
-            this.byId("inputSupplierName").setEnabled(true);
-            oDialog.open();
+        this._pPurchaseDialog.then((oDialog) => {
+          const oDialogModel = this._initializeDialogModel();
 
-            // DYNAMIC: Automatically generate and set the next clean sequence ID
-            var sNextId = this._generateNextPurchaseId();
-            this.byId("inputPOId").setValue(sNextId);
-          }.bind(this),
-        );
-      },
+          oView.setModel(oDialogModel, "dialogData");
+          this.byId("inputPOId").setEnabled(false);
 
-      _generateNextPurchaseId() {
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aOrders = oModel.getProperty("/PurchaseOrders") || [];
+          oDialog.setInitialFocus(this.byId("inputSupplierName"));
+          this.byId("inputSupplierName").setEnabled(true);
 
-        if (aOrders.length === 0) {
-          return "PO-9901"; // Fallback string if array is empty
-        }
+          oDialog.open();
 
-        var aNumbers = aOrders.map(function (oOrder) {
-          // Splitting "PO-99010" by "-" yields ["PO", "99010"]
-          var aParts = oOrder.PONumber.split("-");
-          var sLastPart = aParts[aParts.length - 1]; // "99010"
-
-          // Isolate just the trailing dynamic part (e.g. from 99010 we parse out the consecutive tail)
-          // If your prefix is static "PO-990", let's drop the "990" string part to isolate the counter number
-          var sCounterStr = sLastPart.substring(3); // Drops "990" to isolate "10"
-          return parseInt(sCounterStr, 10);
+          // DYNAMIC: Automatically generate and set the next clean sequence ID
+          let sNextId = this._generateNextPurchaseId();
+          this.byId("inputPOId").setValue(sNextId);
         });
-
-        var nMaxNumber = Math.max.apply(null, aNumbers);
-        var nNextNumber = nMaxNumber + 1; // 10 + 1 = 11
-
-        // Concatenate the structural prefix back onto the calculated value
-        return "PO-990" + nNextNumber;
       },
 
       onAddPOItemRow() {
-        var sProduct = this.byId("inputPOProduct").getValue();
-        var sQty = this.byId("inputPOQty").getValue();
-        var sPrice = this.byId("inputPOPrice").getValue();
+        let sProduct = this.byId("inputPOProduct").getValue();
+        let sQty = this.byId("inputPOQty").getValue();
+        let sPrice = this.byId("inputPOPrice").getValue();
 
         if (!sProduct || !sQty || !sPrice) {
-          sap.m.MessageToast.show("Please enter Product, Quantity, and Price.");
+          MessageToast.show("Please enter Product, Quantity, and Price.");
           return;
         }
 
-        var oDialogModel = this.getView().getModel("dialogData");
-        var aItems = oDialogModel.getProperty("/Items");
-        var nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
+        let oDialogModel = this.getView().getModel("dialogData");
+        let aItems = oDialogModel.getProperty("/Items");
+        let nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
 
         aItems.push({
           Product: sProduct,
@@ -113,21 +84,19 @@ sap.ui.define(
 
         oDialogModel.setProperty("/Items", aItems);
 
-        this.byId("inputPOProduct").setValue("");
-        this.byId("inputPOQty").setValue("");
-        this.byId("inputPOPrice").setValue("");
+        this._clearItemInputs();
       },
 
       onSavePurchase() {
-        var sId = this.byId("inputPOId").getValue();
-        var sSupplier = this.byId("inputSupplierName").getValue();
-        var sStatus = this.byId("selectPOStatus").getSelectedKey();
+        let sId = this.byId("inputPOId").getValue();
+        let sSupplier = this.byId("inputSupplierName").getValue();
+        let sStatus = this.byId("selectPOStatus").getSelectedKey();
 
-        var oDialogModel = this.getView().getModel("dialogData");
-        var aItems = oDialogModel.getProperty("/Items") || [];
+        let oDialogModel = this.getView().getModel("dialogData");
+        let aItems = oDialogModel.getProperty("/Items") || [];
 
         if (!sId || !sSupplier) {
-          sap.m.MessageToast.show(
+          MessageToast.show(
             "Please complete PO Number and Supplier Name fields.",
           );
           return;
@@ -138,18 +107,18 @@ sap.ui.define(
           );
           return;
         }
-        var nTotalSum = aItems.reduce(
+        let nTotalSum = aItems.reduce(
           (acc, item) => acc + parseFloat(item.TotalPrice),
           0,
         );
-        var sFormattedCost = nTotalSum.toLocaleString("en-US", {
+        let sFormattedCost = nTotalSum.toLocaleString("en-US", {
           minimumFractionDigits: 2,
         });
 
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
+        const oModel = this.getOwnerComponent().getModel("orders");
+        let aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
 
-        var oNewPO = {
+        let oNewPO = {
           PONumber: sId,
           SupplierName: sSupplier,
           TotalCost: sFormattedCost,
@@ -165,49 +134,31 @@ sap.ui.define(
         }
 
         oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
-
-        // Save to localStorage
         this.getOwnerComponent().saveOrdersData();
-
         this._editingIndex = null;
-        oModel.setProperty("/PurchaseOrders", aPurchaseOrders);
 
-        // Save to localStorage
-        this.getOwnerComponent().saveOrdersData();
-
-        sap.m.MessageToast.show(
-          "Purchase Order " + sId + " saved successfully!",
-        );
+        MessageToast.show("Purchase Order " + sId + " saved successfully!");
         this.onClosePurchaseDialog();
       },
 
       onClosePurchaseDialog() {
         this.byId("idPurchaseDialog").close();
-
-        this.byId("inputPOId").setEnabled(true);
-
-        this.byId("inputPOId").setValue("");
-        this.byId("inputSupplierName").setValue("");
-        this.byId("selectPOStatus").setSelectedKey("");
-
-        this.getView().getModel("dialogData").setProperty("/Items", []);
-
-        this._editingIndex = null;
+        this._resetPurchaseDialog();
       },
       onDetails(oEvent) {
-        var oItem = oEvent.getSource();
-        var oContext = oItem.getBindingContext("orders");
-        var sPOId = oContext.getProperty("PONumber");
+        let oItem = oEvent.getSource();
+        let oContext = oItem.getBindingContext("orders");
+        let sPOId = oContext.getProperty("PONumber");
 
-        var oRouter = this.getOwnerComponent().getRouter();
+        let oRouter = this.getOwnerComponent().getRouter();
         oRouter.navTo("RouteOrderDetail", {
           orderType: "purchase",
           orderId: sPOId,
         });
       },
       onEditPurchase(oEvent) {
-        var oContext = oEvent.getSource().getBindingContext("orders");
-        var oPurchase = oContext.getObject();
+        let oContext = oEvent.getSource().getBindingContext("orders");
+        let oPurchase = oContext.getObject();
 
         this._editingIndex = parseInt(oContext.getPath().split("/").pop(), 10);
 
@@ -223,9 +174,18 @@ sap.ui.define(
             this.byId("inputSupplierName").setValue(oPurchase.SupplierName);
             this.byId("selectPOStatus").setSelectedKey(oPurchase.Status);
 
-            var oDialogModel = this.getView().getModel("dialogData");
-            oDialogModel.setProperty("/dialogTitle", "Update Purchase Order");
-            oDialogModel.setProperty("/btnText", "Update");
+            let oDialogModel = this.getView().getModel("dialogData");
+            const oBundle = this._getResourceBundle();
+
+            oDialogModel.setProperty(
+              "/dialogTitle",
+              oBundle.getText("updatePurchaseOrderTitle"),
+            );
+
+            oDialogModel.setProperty(
+              "/btnText",
+              oBundle.getText("updateButton"),
+            );
 
             oDialogModel.setProperty(
               "/Items",
@@ -235,11 +195,11 @@ sap.ui.define(
         );
       },
       onDeletePurchase(oEvent) {
-        var oContext = oEvent.getSource().getBindingContext("orders");
-        var iIndex = parseInt(oContext.getPath().split("/").pop(), 10);
+        let oContext = oEvent.getSource().getBindingContext("orders");
+        let iIndex = parseInt(oContext.getPath().split("/").pop(), 10);
 
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
+        let oModel = this.getOwnerComponent().getModel("orders");
+        let aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
 
         MessageBox.confirm(
           "Are you sure you want to delete this Purchase Order?",
@@ -257,6 +217,60 @@ sap.ui.define(
             }.bind(this),
           },
         );
+      },
+
+      // Helper
+      _initializeDialogModel() {
+        const oBundle = this._getResourceBundle();
+        return new JSONModel({
+          dialogTitle: oBundle.getText("createPurchaseOrderTitle"),
+          btnText: oBundle.getText("saveButton"),
+          Items: [],
+        });
+      },
+      _getResourceBundle() {
+        return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+      },
+      _resetPurchaseDialog() {
+        this.byId("inputPOId").setValue("");
+        this.byId("inputSupplierName").setValue("");
+        this.byId("selectPOStatus").setSelectedKey("");
+        this.byId("inputPOId").setEnabled(false);
+        this.byId("inputSupplierName").setEnabled(true);
+
+        this.getView().getModel("dialogData").setProperty("/Items", []);
+
+        this._editingIndex = null;
+      },
+      _clearItemInputs() {
+        this.byId("inputPOProduct").setValue("");
+        this.byId("inputPOQty").setValue("");
+        this.byId("inputPOPrice").setValue("");
+      },
+      _generateNextPurchaseId() {
+        let oModel = this.getOwnerComponent().getModel("orders");
+        let aOrders = oModel.getProperty("/PurchaseOrders") || [];
+
+        if (aOrders.length === 0) {
+          return "PO-9901"; // Fallback string if array is empty
+        }
+
+        let aNumbers = aOrders.map(function (oOrder) {
+          // Splitting "PO-99010" by "-" yields ["PO", "99010"]
+          let aParts = oOrder.PONumber.split("-");
+          let sLastPart = aParts[aParts.length - 1]; // "99010"
+
+          // Isolate just the trailing dynamic part (e.g. from 99010 we parse out the consecutive tail)
+          // If your prefix is static "PO-990", let's drop the "990" string part to isolate the counter number
+          let sCounterStr = sLastPart.substring(3); // Drops "990" to isolate "10"
+          return parseInt(sCounterStr, 10);
+        });
+
+        let nMaxNumber = Math.max.apply(null, aNumbers);
+        let nNextNumber = nMaxNumber + 1; // 10 + 1 = 11
+
+        // Concatenate the structural prefix back onto the calculated value
+        return "PO-990" + nNextNumber;
       },
     });
   },

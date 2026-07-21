@@ -22,7 +22,7 @@ sap.ui.define(
       formatter: window.myGlobalFormatter,
 
       onCreateSales() {
-        var oView = this.getView();
+        const oView = this.getView();
 
         // Open & Close The Dialog
         if (!this._pSalesDialog) {
@@ -36,65 +36,33 @@ sap.ui.define(
         }
 
         this._pSalesDialog.then((oDialog) => {
-          var oDialogModel = new JSONModel({
-            dialogTitle: "Create New Sales Order",
-            btnText: "Save",
-            Items: [],
-          });
-
+          const oDialogModel = this._initializeDialogModel();
           oView.setModel(oDialogModel, "dialogData");
           oDialog.setInitialFocus(this.byId("inputCustomerName"));
 
           oDialog.open();
 
           // Automatically generate and set the next clean sequence ID
-          var sNextId = this._generateNextSalesId();
+          let sNextId = this._generateNextSalesId();
           this.byId("inputSalesId").setValue(sNextId);
           this.byId("inputCustomerName").setEnabled(true);
         });
       },
 
-      _generateNextSalesId() {
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aOrders = oModel.getProperty("/SalesOrders") || [];
-
-        var sYear = new Date().getFullYear().toString();
-
-        // Get only current year's orders
-        var aCurrentYearOrders = aOrders.filter(function (oOrder) {
-          return oOrder.OrderID && oOrder.OrderID.split("-")[1] === sYear;
-        });
-
-        // If no orders for this year, start from 001
-        if (aCurrentYearOrders.length === 0) {
-          return "SO-" + sYear + "-001";
-        }
-
-        // Find the highest sequence number for the current year
-        var nMax = Math.max.apply(
-          null,
-          aCurrentYearOrders.map(function (oOrder) {
-            return parseInt(oOrder.OrderID.split("-")[2], 10);
-          }),
-        );
-
-        return "SO-" + sYear + "-" + String(nMax + 1).padStart(3, "0");
-      },
-
       onAddSalesItemRow() {
-        var sProduct = this.byId("inputSalesProduct").getValue();
-        var sQty = this.byId("inputSalesQty").getValue();
-        var sPrice = this.byId("inputSalesPrice").getValue();
+        let sProduct = this.byId("inputSalesProduct").getValue();
+        let sQty = this.byId("inputSalesQty").getValue();
+        let sPrice = this.byId("inputSalesPrice").getValue();
 
         if (!sProduct || !sQty || !sPrice) {
           MessageToast.show("Please enter Product, Quantity, and Price.");
           return;
         }
 
-        var oDialogModel = this.getView().getModel("dialogData");
-        var aItems = oDialogModel.getProperty("/Items") || [];
+        let oDialogModel = this.getView().getModel("dialogData");
+        let aItems = oDialogModel.getProperty("/Items") || [];
 
-        var nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
+        let nTotalRowPrice = parseInt(sQty, 10) * parseFloat(sPrice);
 
         aItems.push({
           Product: sProduct,
@@ -106,21 +74,19 @@ sap.ui.define(
         oDialogModel.setProperty("/Items", aItems);
 
         // Clear input row elements to allow consecutive entries
-        this.byId("inputSalesProduct").setValue("");
-        this.byId("inputSalesQty").setValue("");
-        this.byId("inputSalesPrice").setValue("");
+        this._clearItemInputs();
       },
 
       onSaveSales() {
-        var oModel = this.getOwnerComponent().getModel("orders");
-        var aSalesOrders = oModel.getProperty("/SalesOrders") || [];
+        const oModel = this.getOwnerComponent().getModel("orders");
+        let aSalesOrders = oModel.getProperty("/SalesOrders") || [];
 
-        var sId = this.byId("inputSalesId").getValue();
-        var sCustomer = this.byId("inputCustomerName").getValue();
-        var sStatus = this.byId("selectStatus").getSelectedKey();
+        let sId = this.byId("inputSalesId").getValue();
+        let sCustomer = this.byId("inputCustomerName").getValue();
+        let sStatus = this.byId("selectStatus").getSelectedKey();
 
-        var oDialogModel = this.getView().getModel("dialogData");
-        var aItems = oDialogModel.getProperty("/Items") || [];
+        let oDialogModel = this.getView().getModel("dialogData");
+        let aItems = oDialogModel.getProperty("/Items") || [];
 
         // FIXED: Checks the added items array table content length instead of blank input elements
         if (!sId || !sCustomer) {
@@ -136,15 +102,15 @@ sap.ui.define(
         }
 
         // Sum NetAmount from staged item objects collection
-        var nTotalSum = aItems.reduce(
+        let nTotalSum = aItems.reduce(
           (acc, item) => acc + parseFloat(item.TotalPrice),
           0,
         );
-        var sFormattedAmount = nTotalSum.toLocaleString("en-US", {
+        let sFormattedAmount = nTotalSum.toLocaleString("en-US", {
           minimumFractionDigits: 2,
         });
 
-        var oNewOrder = {
+        let oNewOrder = {
           OrderID: sId,
           CustomerName: sCustomer,
           NetAmount: sFormattedAmount,
@@ -155,7 +121,7 @@ sap.ui.define(
 
         // Appends structural order context onto the bottom of the data grid rows array
         if (this._editingOrder) {
-          var iIndex = aSalesOrders.findIndex(
+          let iIndex = aSalesOrders.findIndex(
             function (item) {
               return item.OrderID === this._editingOrder.OrderID;
             }.bind(this),
@@ -180,36 +146,23 @@ sap.ui.define(
 
       onCloseSalesDialog() {
         this.byId("idSalesDialog").close();
-
-        this.byId("inputSalesId").setEditable(true);
-
-        this.byId("inputSalesId").setValue("");
-        this.byId("inputCustomerName").setValue("");
-        this.byId("inputSalesProduct").setValue("");
-        this.byId("inputSalesQty").setValue("");
-        this.byId("inputSalesPrice").setValue("");
-
-        this.byId("selectStatus").setSelectedKey("");
-
-        this.getView().getModel("dialogData").setProperty("/Items", []);
-
-        this._editingOrder = null;
+        this._resetSaleDialog();
       },
 
       onSearchSales(oEvent) {
-        var sQuery = oEvent.getParameter("query");
-        var aFilters = sQuery
+        let sQuery = oEvent.getParameter("query");
+        let aFilters = sQuery
           ? [new Filter("OrderID", FilterOperator.Contains, sQuery)]
           : [];
         this.byId("salesTable").getBinding("items").filter(aFilters);
       },
 
       onDetails(oEvent) {
-        var oItem = oEvent.getSource();
-        var oContext = oItem.getBindingContext("orders");
-        var sOrderId = oContext.getProperty("OrderID");
+        let oItem = oEvent.getSource();
+        let oContext = oItem.getBindingContext("orders");
+        let sOrderId = oContext.getProperty("OrderID");
 
-        var oRouter = this.getOwnerComponent().getRouter();
+        let oRouter = this.getOwnerComponent().getRouter();
         oRouter.navTo("RouteOrderDetail", {
           orderType: "sales",
           orderId: sOrderId,
@@ -235,9 +188,17 @@ sap.ui.define(
 
             this.byId("selectStatus").setSelectedKey(oOrder.Status);
 
-            var oDialogModel = this.getView().getModel("dialogData");
-            oDialogModel.setProperty("/dialogTitle", "Update Sales Order");
-            oDialogModel.setProperty("/btnText", "Update");
+            let oDialogModel = this.getView().getModel("dialogData");
+            const oBundle = this._getResourceBundle();
+            oDialogModel.setProperty(
+              "/dialogTitle",
+              oBundle.getText("updateSalesOrderTitle"),
+            );
+
+            oDialogModel.setProperty(
+              "/btnText",
+              oBundle.getText("updateButton"),
+            );
 
             oDialogModel.setProperty(
               "/Items",
@@ -259,7 +220,7 @@ sap.ui.define(
           {
             onClose: function (sAction) {
               if (sAction === MessageBox.Action.OK) {
-                var iIndex = aOrders.findIndex(function (item) {
+                let iIndex = aOrders.findIndex(function (item) {
                   return item.OrderID === oOrder.OrderID;
                 });
 
@@ -269,13 +230,70 @@ sap.ui.define(
                   oModel.setProperty("/SalesOrders", aOrders);
 
                   this.getOwnerComponent().saveOrdersData();
-
                   MessageToast.show("Sales Order deleted successfully.");
                 }
               }
             }.bind(this),
           },
         );
+      },
+      // Helper
+      _initializeDialogModel() {
+        const oBundle = this._getResourceBundle();
+        return new JSONModel({
+          dialogTitle: oBundle.getText("createSalesOrderTitle"),
+          btnText: oBundle.getText("saveButton"),
+          Items: [],
+        });
+      },
+      _getResourceBundle() {
+        return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+      },
+      _resetSaleDialog() {
+        this.byId("inputSalesId").setEditable(true);
+
+        this.byId("inputSalesId").setValue("");
+        this.byId("inputCustomerName").setValue("");
+        this.byId("inputSalesProduct").setValue("");
+        this.byId("inputSalesQty").setValue("");
+        this.byId("inputSalesPrice").setValue("");
+
+        this.byId("selectStatus").setSelectedKey("");
+
+        this.getView().getModel("dialogData").setProperty("/Items", []);
+
+        this._editingOrder = null;
+      },
+      _clearItemInputs() {
+        this.byId("inputSalesProduct").setValue("");
+        this.byId("inputSalesQty").setValue("");
+        this.byId("inputSalesPrice").setValue("");
+      },
+      _generateNextSalesId() {
+        const oModel = this.getOwnerComponent().getModel("orders");
+        let aOrders = oModel.getProperty("/SalesOrders") || [];
+
+        let sYear = new Date().getFullYear().toString();
+
+        // Get only current year's orders
+        let aCurrentYearOrders = aOrders.filter(function (oOrder) {
+          return oOrder.OrderID && oOrder.OrderID.split("-")[1] === sYear;
+        });
+
+        // If no orders for this year, start from 001
+        if (aCurrentYearOrders.length === 0) {
+          return "SO-" + sYear + "-001";
+        }
+
+        // Find the highest sequence number for the current year
+        let nMax = Math.max.apply(
+          null,
+          aCurrentYearOrders.map(function (oOrder) {
+            return parseInt(oOrder.OrderID.split("-")[2], 10);
+          }),
+        );
+
+        return "SO-" + sYear + "-" + String(nMax + 1).padStart(3, "0");
       },
     });
   },
