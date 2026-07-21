@@ -168,6 +168,7 @@
         <endButton>
             <Button
                 text="{i18n>dialogCancelBtn}"
+                type="Reject"
                 press="onCloseSalesDialog"
             />
         </endButton>
