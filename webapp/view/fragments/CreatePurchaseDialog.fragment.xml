@@ -5,10 +5,9 @@
 >
     <Dialog
         id="idPurchaseDialog"
-        title="{i18n>purchaseDialogTitle}"
+        title="{dialogData>/dialogTitle}"
         contentWidth="70%"
         contentHeight="auto"
-        stretchOnPhone="true"
         draggable="true"
         resizable="true"
         type="Message"
@@ -64,19 +63,9 @@
                 <!-- Dynamic Item Row Entry Section -->
                 <form:SimpleForm
                     editable="true"
+                    title="{i18n>dialogFormTitle}"
                     layout="ResponsiveGridLayout"
-                    columnsXL="2"
-                    columnsL="2"
-                    columnsM="1"
-                    labelSpanXL="3"
-                    labelSpanL="3"
-                    labelSpanM="4"
-                    labelSpanS="12"
-                    emptySpanXL="0"
-                    emptySpanL="0"
-                    emptySpanM="0"
-                    emptySpanS="0"
-                    singleContainerFullSize="true"
+                     
                 >
                     <form:content>
                         <Label
@@ -177,6 +166,7 @@
         <endButton>
             <Button
                 text="{i18n>dialogCancelBtn}"
+                type="Reject"
                 press="onClosePurchaseDialog"
             />
         </endButton>

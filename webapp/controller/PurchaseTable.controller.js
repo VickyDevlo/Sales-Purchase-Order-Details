@@ -3,7 +3,6 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/core/Fragment",
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
@@ -13,7 +12,6 @@ sap.ui.define(
     Controller,
     Filter,
     FilterOperator,
-    Fragment,
     MessageToast,
     JSONModel,
     formatter,
@@ -26,11 +24,11 @@ sap.ui.define(
 
       onSearchPurchase(oEvent) {
         var sQuery = oEvent.getParameter("query");
-        
+
         var aFilters = sQuery
-        ? [new Filter("PONumber", FilterOperator.Contains, sQuery)]
-        : [];
-        
+          ? [new Filter("PONumber", FilterOperator.Contains, sQuery)]
+          : [];
+
         this.byId("purchaseTable").getBinding("items").filter(aFilters);
       },
 
@@ -38,8 +36,7 @@ sap.ui.define(
         var oView = this.getView();
 
         if (!this._pPurchaseDialog) {
-          this._pPurchaseDialog = Fragment.load({
-            id: oView.getId(),
+          this._pPurchaseDialog = this.loadFragment({
             name: "sap.ui5.project.view.fragments.CreatePurchaseDialog",
             controller: this,
           }).then((oDialog) => {
@@ -49,7 +46,10 @@ sap.ui.define(
         }
         this._pPurchaseDialog.then(
           function (oDialog) {
-            var oDialogModel = new JSONModel({ Items: [] });
+            var oDialogModel = new JSONModel({
+              dialogTitle: "Create New Purchase Order",
+              Items: [],
+            });
             oView.setModel(oDialogModel, "dialogData");
             this.byId("inputPOId").setEnabled(false);
             oDialog.setInitialFocus(this.byId("inputSupplierName"));
@@ -223,6 +223,7 @@ sap.ui.define(
             this.byId("selectPOStatus").setSelectedKey(oPurchase.Status);
 
             var oDialogModel = this.getView().getModel("dialogData");
+            oDialogModel.setProperty("/dialogTitle", "Update Purchase Order");
 
             oDialogModel.setProperty(
               "/Items",

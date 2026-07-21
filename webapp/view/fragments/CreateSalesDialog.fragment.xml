@@ -5,7 +5,7 @@
 >
     <Dialog
         id="idSalesDialog"
-        title="{i18n>salesDialogTitle}"
+        title="{dialogData>/dialogTitle}"
         contentWidth="70%"
         contentHeight="auto"
         draggable="true"

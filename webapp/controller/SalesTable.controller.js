@@ -3,7 +3,6 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/core/Fragment",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
@@ -12,7 +11,6 @@ sap.ui.define(
     Controller,
     Filter,
     FilterOperator,
-    Fragment,
     JSONModel,
     MessageToast,
     MessageBox,
@@ -28,8 +26,7 @@ sap.ui.define(
 
         // Open & Close The Dialog
         if (!this._pSalesDialog) {
-          this._pSalesDialog = Fragment.load({
-            id: oView.getId(),
+          this._pSalesDialog = this.loadFragment({
             name: "sap.ui5.project.view.fragments.CreateSalesDialog",
             controller: this,
           }).then((oDialog) => {
@@ -39,7 +36,10 @@ sap.ui.define(
         }
 
         this._pSalesDialog.then((oDialog) => {
-          var oDialogModel = new JSONModel({ Items: [] });
+          var oDialogModel = new JSONModel({
+            dialogTitle: "Create New Sales Order",
+            Items: [],
+          });
 
           oView.setModel(oDialogModel, "dialogData");
           oDialog.setInitialFocus(this.byId("inputCustomerName"));
@@ -223,8 +223,8 @@ sap.ui.define(
 
         this.onCreateSales();
 
-        this._pSalesDialog.then(function (oDialog) {
-
+        this._pSalesDialog.then(
+          function (oDialog) {
             oDialog.setInitialFocus(this.byId("selectStatus"));
 
             this.byId("inputSalesId").setValue(oOrder.OrderID);
@@ -235,6 +235,7 @@ sap.ui.define(
             this.byId("selectStatus").setSelectedKey(oOrder.Status);
 
             var oDialogModel = this.getView().getModel("dialogData");
+            oDialogModel.setProperty("/dialogTitle", "Update Sales Order");
 
             oDialogModel.setProperty(
               "/Items",
