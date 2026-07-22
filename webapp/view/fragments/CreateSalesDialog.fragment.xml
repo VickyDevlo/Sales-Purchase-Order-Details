@@ -6,7 +6,6 @@
     <Dialog
         id="idSalesDialog"
         title="{dialogData>/dialogTitle}"
-        contentWidth="70%"
         contentHeight="auto"
         draggable="true"
         resizable="true"

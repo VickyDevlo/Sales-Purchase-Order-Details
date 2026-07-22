@@ -23,8 +23,6 @@ sap.ui.define(
 
       onCreateSales() {
         const oView = this.getView();
-
-        // Open & Close The Dialog
         if (!this._pSalesDialog) {
           this._pSalesDialog = this.loadFragment({
             name: "sap.ui5.project.view.fragments.CreateSalesDialog",
@@ -34,7 +32,6 @@ sap.ui.define(
             return oDialog;
           });
         }
-
         this._pSalesDialog.then((oDialog) => {
           const oDialogModel = this._initializeDialogModel();
           oView.setModel(oDialogModel, "dialogData");
@@ -66,7 +63,7 @@ sap.ui.define(
 
         aItems.push({
           Product: sProduct,
-          Quantity: parseInt(sQty, 10),
+          Quantity: parseInt(sQty),
           UnitPrice: parseFloat(sPrice).toFixed(2),
           TotalPrice: nTotalRowPrice.toFixed(2),
         });

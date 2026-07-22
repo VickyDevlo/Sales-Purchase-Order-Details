@@ -77,7 +77,7 @@ sap.ui.define(
 
         aItems.push({
           Product: sProduct,
-          Quantity: parseInt(sQty, 10),
+          Quantity: parseInt(sQty),
           UnitPrice: parseFloat(sPrice).toFixed(2),
           TotalPrice: nTotalRowPrice.toFixed(2),
         });
@@ -91,7 +91,6 @@ sap.ui.define(
         let sId = this.byId("inputPOId").getValue();
         let sSupplier = this.byId("inputSupplierName").getValue();
         let sStatus = this.byId("selectPOStatus").getSelectedKey();
-
         let oDialogModel = this.getView().getModel("dialogData");
         let aItems = oDialogModel.getProperty("/Items") || [];
 
