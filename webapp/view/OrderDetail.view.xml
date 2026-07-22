@@ -121,12 +121,28 @@
                                 <ObjectNumber number="{detail>Quantity}" />
 
                                 <ObjectNumber
-                                    number="{detail>UnitPrice}"
+                                    number="{
+                                        path: 'detail>UnitPrice',
+                                        type: 'sap.ui.model.type.Float',
+                                        formatOptions: {
+                                            groupingEnabled: true,
+                                            minFractionDigits: 2,
+                                            maxFractionDigits: 2
+                                        }
+                                    }"
                                     unit="EUR"
                                 />
 
                                 <ObjectNumber
-                                    number="{detail>TotalPrice}"
+                                    number="{
+                                        path: 'detail>TotalPrice',
+                                        type: 'sap.ui.model.type.Float',
+                                        formatOptions: {
+                                            groupingEnabled: true,
+                                            minFractionDigits: 2,
+                                            maxFractionDigits: 2
+                                        }
+                                    }"
                                     unit="EUR"
                                     emphasized="true"
                                 />

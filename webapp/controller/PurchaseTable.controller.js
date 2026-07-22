@@ -121,7 +121,7 @@ sap.ui.define(
           TotalCost: nTotalSum,
           Currency: "EUR",
           Status: sStatus,
-          Items: aItems,
+          Items: [...(aItems || [])],
         };
 
         if (this._editingIndex !== undefined && this._editingIndex !== null) {
@@ -156,6 +156,7 @@ sap.ui.define(
       onEditPurchase(oEvent) {
         let oContext = oEvent.getSource().getBindingContext("orders");
         let oPurchase = oContext.getObject();
+        console.log(oPurchase.Items);
 
         this._editingIndex = parseInt(oContext.getPath().split("/").pop(), 10);
 
@@ -186,7 +187,7 @@ sap.ui.define(
 
             oDialogModel.setProperty(
               "/Items",
-              JSON.parse(JSON.stringify(oPurchase.Items)),
+              JSON.parse(JSON.stringify(oPurchase.Items || [])),
             );
           }.bind(this),
         );

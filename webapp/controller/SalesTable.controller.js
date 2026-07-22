@@ -111,7 +111,7 @@ sap.ui.define(
           NetAmount: nTotalSum,
           Currency: "EUR",
           Status: sStatus,
-          Items: aItems,
+          Items: [...(aItems || [])],
         };
 
         // Appends structural order context onto the bottom of the data grid rows array
@@ -197,7 +197,7 @@ sap.ui.define(
 
             oDialogModel.setProperty(
               "/Items",
-              JSON.parse(JSON.stringify(oOrder.Items)),
+              JSON.parse(JSON.stringify(oOrder.Items || [])),
             );
           }.bind(this),
         );
