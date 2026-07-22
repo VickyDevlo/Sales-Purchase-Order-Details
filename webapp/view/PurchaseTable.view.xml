@@ -31,6 +31,48 @@
                         <OverflowToolbarLayoutData priority="Low" />
                     </layoutData>
                 </SearchField>
+                <MenuButton
+                    text="Sort"
+                    icon="sap-icon://sort"
+                >
+                    <menu>
+                        <Menu itemSelected="onSortPurchase">
+                            <MenuItem
+                                text="PO Number (Ascending)"
+                                key="poAsc"
+                            />
+                            <MenuItem
+                                text="PO Number (Descending)"
+                                key="poDesc"
+                            />
+
+                            <MenuItem
+                                text="Supplier Name (A-Z)"
+                                key="supplierAsc"
+                            />
+
+                            <MenuItem
+                                text="Supplier Name (Z-A)"
+                                key="supplierDesc"
+                            />
+
+                            <MenuItem
+                                text="Total Cost (Low-High)"
+                                key="costAsc"
+                            />
+
+                            <MenuItem
+                                text="Total Cost (High-Low)"
+                                key="costDesc"
+                            />
+
+                            <MenuItem
+                                text="Status"
+                                key="status"
+                            />
+                        </Menu>
+                    </menu>
+                </MenuButton>
 
                 <Button
                     icon="sap-icon://add"
@@ -99,10 +141,17 @@
                     <Text text="{orders>SupplierName}" />
 
                     <ObjectNumber
-                        number="{orders>TotalCost}"
+                        number="{
+                            path: 'orders>TotalCost',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {
+                                groupingEnabled: true,
+                                minFractionDigits: 2,
+                                maxFractionDigits: 2
+                            }
+                        }"
                         unit="{orders>Currency}"
                     />
-
                     <tnt:InfoLabel
                         text="{orders>Status}"
                         colorScheme="{path:'orders>Status', formatter:'.formatter.statusColor'}"

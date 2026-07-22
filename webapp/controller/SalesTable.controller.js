@@ -3,6 +3,7 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
@@ -11,6 +12,7 @@ sap.ui.define(
     Controller,
     Filter,
     FilterOperator,
+    Sorter,
     JSONModel,
     MessageToast,
     MessageBox,
@@ -103,14 +105,10 @@ sap.ui.define(
           (acc, item) => acc + parseFloat(item.TotalPrice),
           0,
         );
-        let sFormattedAmount = nTotalSum.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-        });
-
         let oNewOrder = {
           OrderID: sId,
           CustomerName: sCustomer,
-          NetAmount: sFormattedAmount,
+          NetAmount: nTotalSum,
           Currency: "EUR",
           Status: sStatus,
           Items: aItems,
@@ -234,6 +232,12 @@ sap.ui.define(
           },
         );
       },
+      onSortSales(oEvent) {
+        const sKey = oEvent.getParameter("item").getKey();
+        this.byId("salesTable")
+          .getBinding("items")
+          .sort(this._getSalesSorter(sKey));
+      },
       // Helper
       _initializeDialogModel() {
         const oBundle = this._getResourceBundle();
@@ -291,6 +295,48 @@ sap.ui.define(
         );
 
         return "SO-" + sYear + "-" + String(nMax + 1).padStart(3, "0");
+      },
+      _getSalesSorter(sKey) {
+        const mSorters = {
+          orderAsc: {
+            path: "OrderID",
+            descending: false,
+          },
+
+          orderDesc: {
+            path: "OrderID",
+            descending: true,
+          },
+
+          customerAsc: {
+            path: "CustomerName",
+            descending: false,
+          },
+
+          customerDesc: {
+            path: "CustomerName",
+            descending: true,
+          },
+
+          amountAsc: {
+            path: "NetAmount",
+            descending: false,
+          },
+
+          amountDesc: {
+            path: "NetAmount",
+            descending: true,
+          },
+
+          status: {
+            path: "Status",
+            descending: false,
+          },
+        };
+
+        const oConfig = mSorters[sKey];
+
+        return oConfig ? new Sorter(oConfig.path, oConfig.descending) : null;
       },
     });
   },

@@ -3,6 +3,7 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter",
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
@@ -12,6 +13,7 @@ sap.ui.define(
     Controller,
     Filter,
     FilterOperator,
+    Sorter,
     MessageToast,
     JSONModel,
     formatter,
@@ -110,17 +112,13 @@ sap.ui.define(
           (acc, item) => acc + parseFloat(item.TotalPrice),
           0,
         );
-        let sFormattedCost = nTotalSum.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-        });
-
         const oModel = this.getOwnerComponent().getModel("orders");
         let aPurchaseOrders = oModel.getProperty("/PurchaseOrders");
 
         let oNewPO = {
           PONumber: sId,
           SupplierName: sSupplier,
-          TotalCost: sFormattedCost,
+          TotalCost: nTotalSum,
           Currency: "EUR",
           Status: sStatus,
           Items: aItems,
@@ -217,7 +215,12 @@ sap.ui.define(
           },
         );
       },
-
+      onSortPurchase(oEvent) {
+        const sKey = oEvent.getParameter("item").getKey();
+        this.byId("purchaseTable")
+          .getBinding("items")
+          .sort(this._getPurchaseSorter(sKey));
+      },
       // Helper
       _initializeDialogModel() {
         const oBundle = this._getResourceBundle();
@@ -270,6 +273,57 @@ sap.ui.define(
 
         // Concatenate the structural prefix back onto the calculated value
         return "PO-990" + nNextNumber;
+      },
+      _getPurchaseSorter(sKey) {
+        const mSorters = {
+          poAsc: {
+            path: "PONumber",
+            descending: false,
+          },
+          poDesc: {
+            path: "PONumber",
+            descending: true,
+          },
+          supplierAsc: {
+            path: "SupplierName",
+            descending: false,
+          },
+          supplierDesc: {
+            path: "SupplierName",
+            descending: true,
+          },
+          costAsc: {
+            path: "TotalCost",
+            descending: false,
+          },
+          costDesc: {
+            path: "TotalCost",
+            descending: true,
+          },
+          status: {
+            path: "Status",
+            descending: false,
+          },
+        };
+
+        const oConfig = mSorters[sKey];
+
+        if (!oConfig) {
+          return null;
+        }
+
+        const oSorter = new Sorter(oConfig.path, oConfig.descending);
+
+        if (oConfig.path === "PONumber") {
+          oSorter.fnCompare = function (a, b) {
+            const nA = Number(a.replace("PO-990", ""));
+            const nB = Number(b.replace("PO-990", ""));
+
+            return nA - nB;
+          };
+        }
+
+        return oSorter;
       },
     });
   },

@@ -32,6 +32,46 @@
                         <OverflowToolbarLayoutData priority="Low" />
                     </layoutData>
                 </SearchField>
+                <MenuButton
+                    text="Sort"
+                    icon="sap-icon://sort"
+                >
+                    <menu>
+                        <Menu itemSelected="onSortSales">
+                            <MenuItem
+                                text="Order ID (Ascending)"
+                                key="orderAsc"
+                            />
+                            <MenuItem
+                                text="Order ID (Descending)"
+                                key="orderDesc"
+                            />
+
+                            <MenuItem
+                                text="Customer Name (A-Z)"
+                                key="customerAsc"
+                            />
+                            <MenuItem
+                                text="Customer Name (Z-A)"
+                                key="customerDesc"
+                            />
+
+                            <MenuItem
+                                text="Net Amount (Low-High)"
+                                key="amountAsc"
+                            />
+                            <MenuItem
+                                text="Net Amount (High-Low)"
+                                key="amountDesc"
+                            />
+
+                            <MenuItem
+                                text="Status"
+                                key="status"
+                            />
+                        </Menu>
+                    </menu>
+                </MenuButton>
 
                 <Button
                     icon="sap-icon://add"
@@ -100,7 +140,15 @@
                     <Text text="{orders>CustomerName}" />
 
                     <ObjectNumber
-                        number="{orders>NetAmount}"
+                        number="{
+                            path: 'orders>NetAmount',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {
+                                groupingEnabled: true,
+                                minFractionDigits: 2,
+                                maxFractionDigits: 2
+                            }
+                        }"
                         unit="{orders>Currency}"
                     />
 

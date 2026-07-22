@@ -67,7 +67,10 @@ sap.ui.define(
           );
           this.byId("txtTotal").setText(
             oMatchedData
-              ? oMatchedData.NetAmount + " " + oMatchedData.Currency
+              ? this._formatCurrency(
+                  oMatchedData.NetAmount,
+                  oMatchedData.Currency,
+                )
               : "",
           );
         } else {
@@ -80,7 +83,10 @@ sap.ui.define(
           );
           this.byId("txtTotal").setText(
             oMatchedData
-              ? oMatchedData.TotalCost + " " + oMatchedData.Currency
+              ? this._formatCurrency(
+                  oMatchedData.TotalCost,
+                  oMatchedData.Currency,
+                )
               : "",
           );
         }
@@ -96,6 +102,12 @@ sap.ui.define(
           // Clear table if no data found
           this.getView().getModel("detail").setProperty("/Items", []);
         }
+      },
+      _formatCurrency(nAmount, sCurrency) {
+        return `${new Intl.NumberFormat("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(nAmount)} ${sCurrency}`;
       },
     });
   },
