@@ -144,9 +144,18 @@
                             <cells>
                                 <Text text="{dialogData>Product}" />
                                 <Text text="{dialogData>Quantity}" />
+
                                 <ObjectNumber
-                                    number="{dialogData>TotalPrice}"
-                                    unit="EUR"
+                                    number="{
+                                        path: 'dialogData>TotalPrice',
+                                        type: 'sap.ui.model.type.Float',
+                                        formatOptions: {
+                                            groupingEnabled: true,
+                                            minFractionDigits: 2,
+                                            maxFractionDigits: 2
+                                        }
+                                    }"
+                                    unit="{dialogData>/Currency}"
                                 />
                             </cells>
                         </ColumnListItem>

@@ -244,6 +244,7 @@ sap.ui.define(
         return new JSONModel({
           dialogTitle: oBundle.getText("createSalesOrderTitle"),
           btnText: oBundle.getText("saveButton"),
+          Currency: "EUR",
           Items: [],
         });
       },

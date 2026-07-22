@@ -65,14 +65,6 @@ sap.ui.define(
           this.byId("txtPartnerName").setText(
             oMatchedData ? oMatchedData.CustomerName : "",
           );
-          this.byId("txtTotal").setText(
-            oMatchedData
-              ? this._formatCurrency(
-                  oMatchedData.NetAmount,
-                  oMatchedData.Currency,
-                )
-              : "",
-          );
         } else {
           aOrders = oModel.getProperty("/PurchaseOrders") || [];
           oMatchedData = aOrders.find((item) => item.PONumber === sOrderId);
@@ -81,33 +73,35 @@ sap.ui.define(
           this.byId("txtPartnerName").setText(
             oMatchedData ? oMatchedData.SupplierName : "",
           );
-          this.byId("txtTotal").setText(
-            oMatchedData
-              ? this._formatCurrency(
-                  oMatchedData.TotalCost,
-                  oMatchedData.Currency,
-                )
-              : "",
-          );
         }
 
         if (oMatchedData) {
           this.byId("txtOrderId").setText(sOrderId);
           this.byId("txtStatus").setText(oMatchedData.Status);
 
-          // NEW: Update the local detail model with the nested items array
-          var aItems = oMatchedData.Items || [];
-          this.getView().getModel("detail").setProperty("/Items", aItems);
+          // Set Total Amount
+          this.byId("txtTotal").setNumber(
+            sOrderType === "sales"
+              ? oMatchedData.NetAmount
+              : oMatchedData.TotalCost,
+          );
+
+          this.byId("txtTotal").setUnit(oMatchedData.Currency);
+
+          // Update line items
+          this.getView()
+            .getModel("detail")
+            .setProperty("/Items", oMatchedData.Items || []);
         } else {
-          // Clear table if no data found
+          this.byId("txtOrderId").setText("");
+          this.byId("txtPartnerName").setText("");
+          this.byId("txtStatus").setText("");
+
+          this.byId("txtTotal").setNumber("");
+          this.byId("txtTotal").setUnit("");
+
           this.getView().getModel("detail").setProperty("/Items", []);
         }
-      },
-      _formatCurrency(nAmount, sCurrency) {
-        return `${new Intl.NumberFormat("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(nAmount)} ${sCurrency}`;
       },
     });
   },

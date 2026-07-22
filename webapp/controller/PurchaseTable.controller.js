@@ -156,7 +156,6 @@ sap.ui.define(
       onEditPurchase(oEvent) {
         let oContext = oEvent.getSource().getBindingContext("orders");
         let oPurchase = oContext.getObject();
-        console.log(oPurchase.Items);
 
         this._editingIndex = parseInt(oContext.getPath().split("/").pop(), 10);
 
@@ -228,6 +227,7 @@ sap.ui.define(
         return new JSONModel({
           dialogTitle: oBundle.getText("createPurchaseOrderTitle"),
           btnText: oBundle.getText("saveButton"),
+          Currency: "EUR",
           Items: [],
         });
       },

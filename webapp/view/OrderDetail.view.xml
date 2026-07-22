@@ -49,9 +49,18 @@
                         />
 
                         <Label text="{i18n>totalLabel}" />
-                        <Text
+                        <ObjectNumber
                             id="txtTotal"
-                            text=""
+                            number="{
+                                path: 'detail>/NetAmount',
+                                type: 'sap.ui.model.type.Float',
+                                formatOptions: {
+                                    groupingEnabled: true,
+                                    minFractionDigits: 2,
+                                    maxFractionDigits: 2
+                                }
+                            }"
+                            unit="{detail>/Currency}"
                         />
 
                         <Label text="{i18n>statusLabel}" />
