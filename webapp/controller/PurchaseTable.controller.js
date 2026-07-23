@@ -8,6 +8,7 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
     "sap/m/MessageBox",
+    "sap/ui/export/Spreadsheet",
   ],
   function (
     Controller,
@@ -18,6 +19,7 @@ sap.ui.define(
     JSONModel,
     formatter,
     MessageBox,
+    Spreadsheet,
   ) {
     "use strict";
 
@@ -201,7 +203,7 @@ sap.ui.define(
         MessageBox.confirm(
           "Are you sure you want to delete this Purchase Order?",
           {
-            onClose: function (sAction) {
+            onClose(sAction) {
               if (sAction === MessageBox.Action.OK) {
                 aPurchaseOrders.splice(iIndex, 1);
 
@@ -211,7 +213,7 @@ sap.ui.define(
 
                 MessageToast.show("Purchase Order deleted successfully.");
               }
-            }.bind(this),
+            },
           },
         );
       },
@@ -220,6 +222,101 @@ sap.ui.define(
         this.byId("purchaseTable")
           .getBinding("items")
           .sort(this._getPurchaseSorter(sKey));
+      },
+      onExportPurchase() {
+        const oModel = this.getOwnerComponent().getModel("orders");
+        const aOrders = oModel.getProperty("/PurchaseOrders");
+
+        if (!aOrders.length) {
+          MessageBox.show("No Purchase Order available");
+          return;
+        }
+        const aExportData = [];
+
+        aOrders.forEach((oOrder) => {
+          (oOrder.Items || []).forEach((oItem) => {
+            aExportData.push({
+              PONumber: oOrder.PONumber,
+              SupplierName: oOrder.SupplierName,
+              Product: oItem.Product,
+              Quantity: Number(oItem.Quantity),
+              UnitPrice: Number(oItem.UnitPrice),
+              TotalPrice: Number(oItem.TotalPrice),
+              Currency: oOrder.Currency,
+              Status: oOrder.Status,
+            });
+          });
+        });
+        const oSettings = {
+          workbook: {
+            columns: [
+              {
+                label: "PO Number",
+                property: "PONumber",
+                type: "string",
+              },
+
+              {
+                label: "Supplier Name",
+                property: "SupplierName",
+                type: "string",
+              },
+
+              {
+                label: "Product",
+                property: "Product",
+                type: "string",
+              },
+
+              {
+                label: "Quantity",
+                property: "Quantity",
+                type: "number",
+              },
+
+              {
+                label: "Unit Price (₹)",
+                property: "UnitPrice",
+                type: "number",
+                scale: 2,
+              },
+
+              {
+                label: "Total Price (₹)",
+                property: "TotalPrice",
+                type: "number",
+                scale: 2,
+              },
+
+              {
+                label: "Currency",
+                property: "Currency",
+                type: "string",
+              },
+
+              {
+                label: "Status",
+                property: "Status",
+                type: "string",
+              },
+            ],
+          },
+          dataSource: aExportData,
+          fileName: "Purchase_Order_Items.xlsx",
+        };
+
+        const oSPreadsheet = new Spreadsheet(oSettings);
+        this.getView().setBusy(true);
+
+        oSPreadsheet
+          .build()
+          .then(() => {
+            MessageToast.show("Purchase items exported successfully.");
+          })
+          .finally(() => {
+            this.getView().setBusy(false);
+            oSPreadsheet.destroy();
+          });
       },
       // Helper
       _initializeDialogModel() {
@@ -258,7 +355,7 @@ sap.ui.define(
           return "PO-9901"; // Fallback string if array is empty
         }
 
-        let aNumbers = aOrders.map(function (oOrder) {
+        let aNumbers = aOrders.map((oOrder) => {
           // Splitting "PO-99010" by "-" yields ["PO", "99010"]
           let aParts = oOrder.PONumber.split("-");
           let sLastPart = aParts[aParts.length - 1]; // "99010"

@@ -73,7 +73,11 @@
                         </Menu>
                     </menu>
                 </MenuButton>
-
+                <Button
+                    text="Export"
+                    icon="sap-icon://excel-attachment"
+                    press="onExportPurchase"
+                />
                 <Button
                     icon="sap-icon://add"
                     text="{i18n>addNewPurchaseBtnText}"

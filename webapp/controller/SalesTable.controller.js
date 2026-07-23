@@ -7,6 +7,7 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/ui/export/Spreadsheet",
   ],
   function (
     Controller,
@@ -16,6 +17,7 @@ sap.ui.define(
     JSONModel,
     MessageToast,
     MessageBox,
+    Spreadsheet,
   ) {
     "use strict";
 
@@ -237,6 +239,105 @@ sap.ui.define(
         this.byId("salesTable")
           .getBinding("items")
           .sort(this._getSalesSorter(sKey));
+      },
+      onExportSales() {
+        const oModel = this.getOwnerComponent().getModel("orders");
+        const aOrders = oModel.getProperty("/SalesOrders") || [];
+
+        if (!aOrders.length) {
+          MessageToast.show("No Sales Orders available.");
+          return;
+        }
+
+        const aExportData = [];
+
+        aOrders.forEach((oOrder) => {
+          (oOrder.Items || []).forEach((oItem) => {
+            aExportData.push({
+              OrderID: oOrder.OrderID,
+              CustomerName: oOrder.CustomerName,
+              Product: oItem.Product,
+              Quantity: Number(oItem.Quantity),
+              UnitPrice: Number(oItem.UnitPrice),
+              TotalPrice: Number(oItem.TotalPrice),
+              Currency: oOrder.Currency,
+              Status: oOrder.Status,
+            });
+          });
+        });
+
+        const oSettings = {
+          workbook: {
+            columns: [
+              {
+                label: "Order ID",
+                property: "OrderID",
+                type: "string",
+              },
+
+              {
+                label: "Customer Name",
+                property: "CustomerName",
+                type: "string",
+              },
+
+              {
+                label: "Product",
+                property: "Product",
+                type: "string",
+              },
+
+              {
+                label: "Quantity",
+                property: "Quantity",
+                type: "number",
+              },
+
+              {
+                label: "Unit Price",
+                property: "UnitPrice",
+                type: "number",
+                scale: 2,
+              },
+
+              {
+                label: "Total Price",
+                property: "TotalPrice",
+                type: "number",
+                scale: 2,
+              },
+
+              {
+                label: "Currency",
+                property: "Currency",
+                type: "string",
+              },
+
+              {
+                label: "Status",
+                property: "Status",
+                type: "string",
+              },
+            ],
+          },
+
+          dataSource: aExportData,
+
+          fileName: "Sales_Order_Items.xlsx",
+        };
+
+        const oSpreadsheet = new Spreadsheet(oSettings);
+
+        this.getView().setBusy(true);
+
+        oSpreadsheet
+          .build().then(() => {
+            MessageToast.show("Sales items exported successfully.");
+          })
+          .finally(() => {
+            this.getView().setBusy(false);
+            oSpreadsheet.destroy();
+          });
       },
       // Helper
       _initializeDialogModel() {
