@@ -8,6 +8,7 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "sap/ui/export/Spreadsheet",
+    "../util/ExcelExport"
   ],
   function (
     Controller,
@@ -18,6 +19,7 @@ sap.ui.define(
     MessageToast,
     MessageBox,
     Spreadsheet,
+    ExcelExport
   ) {
     "use strict";
 
@@ -268,57 +270,7 @@ sap.ui.define(
 
         const oSettings = {
           workbook: {
-            columns: [
-              {
-                label: "Order ID",
-                property: "OrderID",
-                type: "string",
-              },
-
-              {
-                label: "Customer Name",
-                property: "CustomerName",
-                type: "string",
-              },
-
-              {
-                label: "Product",
-                property: "Product",
-                type: "string",
-              },
-
-              {
-                label: "Quantity",
-                property: "Quantity",
-                type: "number",
-              },
-
-              {
-                label: "Unit Price",
-                property: "UnitPrice",
-                type: "number",
-                scale: 2,
-              },
-
-              {
-                label: "Total Price",
-                property: "TotalPrice",
-                type: "number",
-                scale: 2,
-              },
-
-              {
-                label: "Currency",
-                property: "Currency",
-                type: "string",
-              },
-
-              {
-                label: "Status",
-                property: "Status",
-                type: "string",
-              },
-            ],
+            columns: ExcelExport.getSalesColumns()
           },
 
           dataSource: aExportData,
@@ -378,17 +330,13 @@ sap.ui.define(
 
         let sYear = new Date().getFullYear().toString();
 
-        // Get only current year's orders
         let aCurrentYearOrders = aOrders.filter(function (oOrder) {
           return oOrder.OrderID && oOrder.OrderID.split("-")[1] === sYear;
         });
 
-        // If no orders for this year, start from 001
         if (aCurrentYearOrders.length === 0) {
           return "SO-" + sYear + "-001";
         }
-
-        // Find the highest sequence number for the current year
         let nMax = Math.max.apply(
           null,
           aCurrentYearOrders.map(function (oOrder) {

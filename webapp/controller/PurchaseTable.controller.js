@@ -9,6 +9,7 @@ sap.ui.define(
     "../model/formatter",
     "sap/m/MessageBox",
     "sap/ui/export/Spreadsheet",
+    "../util/ExcelExport",
   ],
   function (
     Controller,
@@ -20,6 +21,7 @@ sap.ui.define(
     formatter,
     MessageBox,
     Spreadsheet,
+    ExcelExport,
   ) {
     "use strict";
 
@@ -249,57 +251,7 @@ sap.ui.define(
         });
         const oSettings = {
           workbook: {
-            columns: [
-              {
-                label: "PO Number",
-                property: "PONumber",
-                type: "string",
-              },
-
-              {
-                label: "Supplier Name",
-                property: "SupplierName",
-                type: "string",
-              },
-
-              {
-                label: "Product",
-                property: "Product",
-                type: "string",
-              },
-
-              {
-                label: "Quantity",
-                property: "Quantity",
-                type: "number",
-              },
-
-              {
-                label: "Unit Price (₹)",
-                property: "UnitPrice",
-                type: "number",
-                scale: 2,
-              },
-
-              {
-                label: "Total Price (₹)",
-                property: "TotalPrice",
-                type: "number",
-                scale: 2,
-              },
-
-              {
-                label: "Currency",
-                property: "Currency",
-                type: "string",
-              },
-
-              {
-                label: "Status",
-                property: "Status",
-                type: "string",
-              },
-            ],
+            columns: ExcelExport.getPurchaseOrderColumns(),
           },
           dataSource: aExportData,
           fileName: "Purchase_Order_Items.xlsx",
@@ -358,18 +310,13 @@ sap.ui.define(
         let aNumbers = aOrders.map((oOrder) => {
           // Splitting "PO-99010" by "-" yields ["PO", "99010"]
           let aParts = oOrder.PONumber.split("-");
-          let sLastPart = aParts[aParts.length - 1]; // "99010"
-
-          // Isolate just the trailing dynamic part (e.g. from 99010 we parse out the consecutive tail)
-          // If your prefix is static "PO-990", let's drop the "990" string part to isolate the counter number
-          let sCounterStr = sLastPart.substring(3); // Drops "990" to isolate "10"
+          let sLastPart = aParts[aParts.length - 1];
+          let sCounterStr = sLastPart.substring(3);
           return parseInt(sCounterStr, 10);
         });
 
         let nMaxNumber = Math.max.apply(null, aNumbers);
-        let nNextNumber = nMaxNumber + 1; // 10 + 1 = 11
-
-        // Concatenate the structural prefix back onto the calculated value
+        let nNextNumber = nMaxNumber + 1;
         return "PO-990" + nNextNumber;
       },
       _getPurchaseSorter(sKey) {
