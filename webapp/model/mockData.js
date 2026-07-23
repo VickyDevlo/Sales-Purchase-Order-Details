@@ -6,7 +6,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-001",
         CustomerName: "Acme Corp",
         NetAmount: 12500,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Delivered",
         Items: [
           {
@@ -27,7 +27,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-002",
         CustomerName: "Globex Inc",
         NetAmount: 45230,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Pending",
         Items: [
           {
@@ -42,7 +42,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-003",
         CustomerName: "Initech Corporation",
         NetAmount: 3150,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Delivered",
         Items: [
           {
@@ -63,7 +63,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-004",
         CustomerName: "Umbrella Corp",
         NetAmount: 89000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Cancelled",
         Items: [
           {
@@ -78,7 +78,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-005",
         CustomerName: "Hooli Logistics",
         NetAmount: 15800,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "In Progress",
         Items: [
           {
@@ -99,7 +99,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-006",
         CustomerName: "Soylent Green Co",
         NetAmount: 6200,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Delivered",
         Items: [
           {
@@ -114,7 +114,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-007",
         CustomerName: "Wayne Enterprises",
         NetAmount: 245000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Pending",
         Items: [
           {
@@ -135,7 +135,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-008",
         CustomerName: "Stark Industries",
         NetAmount: 1200000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -150,7 +150,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-009",
         CustomerName: "Cyberdyne Systems",
         NetAmount: 73400,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "In Progress",
         Items: [
           {
@@ -165,7 +165,7 @@ sap.ui.define([], function () {
         OrderID: "SO-2026-010",
         CustomerName: "Tyrell Bio-Tech",
         NetAmount: 19100,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Delivered",
         Items: [
           {
@@ -188,7 +188,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9901",
         SupplierName: "Logistics Hub",
         TotalCost: 85000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -210,7 +210,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9902",
         SupplierName: "Alpha Tech Solutions",
         TotalCost: 3400,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "In Progress",
         Items: [
           {
@@ -225,7 +225,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9903",
         SupplierName: "Global Steel Foundry",
         TotalCost: 22000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -240,7 +240,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9904",
         SupplierName: "Delta Chemical Corp",
         TotalCost: 14150,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Pending",
         Items: [
           {
@@ -262,7 +262,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9905",
         SupplierName: "Omni Plastic Matrix",
         TotalCost: 7800,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -277,7 +277,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9906",
         SupplierName: "Apex Power Grid",
         TotalCost: 115000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "In Progress",
         Items: [
           {
@@ -299,7 +299,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9907",
         SupplierName: "Prime Packaging Ltd",
         TotalCost: 2450,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -321,7 +321,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9908",
         SupplierName: "Matrix Server Supply",
         TotalCost: 68000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Cancelled",
         Items: [
           {
@@ -336,7 +336,7 @@ sap.ui.define([], function () {
         PONumber: "PO-9909",
         SupplierName: "Titan Machinery",
         TotalCost: 340000,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Approved",
         Items: [
           {
@@ -351,7 +351,7 @@ sap.ui.define([], function () {
         PONumber: "PO-99010",
         SupplierName: "Eco Fuels Distribution",
         TotalCost: 11200,
-        Currency: "EUR",
+        Currency: "₨",
         Status: "Pending",
         Items: [
           {

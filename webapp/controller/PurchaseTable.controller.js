@@ -119,7 +119,7 @@ sap.ui.define(
           PONumber: sId,
           SupplierName: sSupplier,
           TotalCost: nTotalSum,
-          Currency: "EUR",
+          Currency: "₨",
           Status: sStatus,
           Items: [...(aItems || [])],
         };
@@ -227,7 +227,7 @@ sap.ui.define(
         return new JSONModel({
           dialogTitle: oBundle.getText("createPurchaseOrderTitle"),
           btnText: oBundle.getText("saveButton"),
-          Currency: "EUR",
+          Currency: "₨",
           Items: [],
         });
       },

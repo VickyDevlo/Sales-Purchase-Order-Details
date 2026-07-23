@@ -60,7 +60,7 @@
                                     maxFractionDigits: 2
                                 }
                             }"
-                            unit="{detail>/Currency}"
+                            
                         />
 
                         <Label text="{i18n>statusLabel}" />
@@ -139,7 +139,7 @@
                                             maxFractionDigits: 2
                                         }
                                     }"
-                                    unit="EUR"
+                                    unit="₨"
                                 />
 
                                 <ObjectNumber
@@ -152,7 +152,7 @@
                                             maxFractionDigits: 2
                                         }
                                     }"
-                                    unit="EUR"
+                                    unit="₨"
                                     emphasized="true"
                                 />
                             </cells>
